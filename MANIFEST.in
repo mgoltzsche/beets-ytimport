@@ -1,0 +1,2 @@
+include README.md
+include beetsplug/ytimport/config_default.yaml

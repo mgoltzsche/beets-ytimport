@@ -1,0 +1,46 @@
+name: Build and release
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+
+concurrency: # Run release builds sequentially, cancel outdated PR builds
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    permissions: # Grant write access to github.token within non-pull_request builds
+      contents: write
+      id-token: write
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        persist-credentials: false
+
+    - id: release
+      name: Prepare release
+      uses: mgoltzsche/conventional-release@v0
+
+    - name: Build egg
+      if: steps.release.outputs.publish # run only on release build
+      run: |
+        set -u
+        echo Publishing beets-ytimport egg $RELEASE_VERSION
+        make egg
+     # env:
+     #  PYPI_PASS: ${{ github.token }} # assumes pypi is configured to accept gh OIDC token
+
+    - name: Publish package to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+

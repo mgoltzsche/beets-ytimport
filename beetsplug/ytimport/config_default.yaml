@@ -1,0 +1,6 @@
+#directory: /path/to/your/youtube/cache
+import: true
+likes: false
+max_likes: 50
+auth_headers: # file path
+set: ''
