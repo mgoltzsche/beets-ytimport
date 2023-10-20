@@ -31,16 +31,17 @@ jobs:
     - id: release
       name: Prepare release
       uses: mgoltzsche/conventional-release@v0
+      with:
+        commit-files: setup.py
 
     - name: Build egg
-      if: steps.release.outputs.publish # run only on release build
       run: |
         set -u
-        echo Publishing beets-ytimport egg $RELEASE_VERSION
-        make egg
-     # env:
-     #  PYPI_PASS: ${{ github.token }} # assumes pypi is configured to accept gh OIDC token
+        sed -Ei "s/^( +version=).+/\1'$RELEASE_VERSION',/" setup.py
+        echo Building beets-ytimport egg $RELEASE_VERSION
+        make
 
     - name: Publish package to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
+      if: steps.release.outputs.publish # runs only if release build
 

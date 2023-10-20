@@ -8,6 +8,12 @@ Differences compared to the [ydl plugin](https://github.com/vmassuchetto/beets-y
 * Uses [yt-dlp](https://github.com/yt-dlp/yt-dlp) instead of [ytdl](https://github.com/ytdl-org/youtube-dl) to download the audio files.
 * Does not split albums into tracks.
 
+## Installation
+
+```sh
+python3 -m pip install beets-ytimport ytmusicapi yt-dlp
+```
+
 ## Configuration
 
 Add a `ytimport` section to your Beets `config.yaml` as follows:
@@ -31,7 +37,7 @@ beet ytimport --likes --max-likes 1500
 ```
 
 Please note that the command prompts you for Google authentication, unless you specified the `auth_headers` option within your Beets configuration file.
-
+Import auto-tagger prompts can be disabled by specifying the `-q` option.
 You can interrupt and continue or repeat the command to synchronize likes from your Youtube account(s) into your Beets library incrementally.
 
 ### CLI
