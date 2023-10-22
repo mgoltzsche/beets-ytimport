@@ -25,6 +25,8 @@ ytimport:
   max_likes: 50
   set: 'mykey=myvalue'
   auth_headers: /path/to/your/http/headers
+  min_len: 60
+  max_len: 7200
 ```
 
 For more information, see [CLI](#cli).
