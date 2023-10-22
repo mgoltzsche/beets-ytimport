@@ -34,11 +34,15 @@ jobs:
       with:
         commit-files: setup.py
 
-    - name: Build egg
+    - name: Bump module version
+      if: steps.release.outputs.publish # runs only if release build
+      run: |
+        sed -Ei "s/^( +version=).+/\1'$RELEASE_VERSION',/" setup.py
+
+    - name: Build wheel
       run: |
         set -u
-        sed -Ei "s/^( +version=).+/\1'$RELEASE_VERSION',/" setup.py
-        echo Building beets-ytimport egg $RELEASE_VERSION
+        echo Building beets-ytimport wheel $RELEASE_VERSION
         make
 
     - name: Publish package to PyPI
