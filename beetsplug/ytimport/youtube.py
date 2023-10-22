@@ -7,14 +7,15 @@ def login(headers=None):
     if headers:
         return ytmusicapi.setup(headers_raw=headers)
     else:
-        return ytmusicapi.setup_oauth()
+        a = ytmusicapi.setup_oauth()
+        return json.dumps(a)
 
 def likes(auth, max_tracks):
-    yt = ytmusicapi.YTMusic(json.dumps(auth))
+    yt = ytmusicapi.YTMusic(auth)
     likes = yt.get_liked_songs(max_tracks)
     return [t['videoId'] for t in likes['tracks']]
 
-def download(urls, target_dir, auth_headers={}):
+def download(urls, target_dir, min_len=60, max_len=7200, auth_headers={}):
     # Test data
     #urls = [
     #    'https://www.youtube.com/watch?v=Q89OdbX7A8E', # "Pendulum - Slam [HD - 320kbps]" von "Shadowrend68"
@@ -26,12 +27,12 @@ def download(urls, target_dir, auth_headers={}):
     #    'https://www.youtube.com/watch?v=ruc0TnSSi9Y', # "Squarepusher - The Exploding Psychology (HD)"
     #    'https://www.youtube.com/watch?v=5tJPMBB7MgE', # "[Dubstep ] Occult -- Cauldron [HD. HQ, 1920px] 30 MINUTES + FREE DOWNLOAD"
     #]
-    
+
     def download_filter(info, *, incomplete):
         duration = info.get('duration')
-        if duration and duration < 60:
+        if duration and duration < min_len:
             return 'Track is too short'
-        if duration and duration > 7200:
+        if duration and duration > max_len:
             return 'Track is too long'
 
     ytdl_opts = {

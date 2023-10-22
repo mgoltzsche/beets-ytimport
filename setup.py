@@ -7,7 +7,7 @@ setuptools.setup(
     name='beets-ytimport',
     version='0.0.0-dev',
     author='Max Goltzsche',
-    description='Download Youtube audio and import it into your beets library',
+    description='Download audio from Youtube into your Beets library',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/mgoltzsche/beets-ytimport',

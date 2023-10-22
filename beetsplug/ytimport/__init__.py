@@ -14,16 +14,17 @@ class YtImportPlugin(BeetsPlugin):
         self.config.add(source)
 
     def commands(self):
+
         def run_import_cmd(lib, opts, args):
             ytdir = opts.directory
             urls = args
+            headers = opts.auth_headers
+            if headers:
+                f = open(headers, 'r')
+                headers = f.read()
+                f.close()
             if opts.likes:
-                print('Obtaining up to {:n} of your liked songs from Youtube'.format(opts.max_likes))
-                headers = opts.auth_headers
-                if headers:
-                    f = open(headers, 'r')
-                    headers = f.read()
-                    f.close()
+                print('Obtaining your liked songs from Youtube...')
                 if not headers:
                     print('Using interactive authentication. To enable non-interactive authentication, set --auth-headers')
                 auth = youtube.login(headers)
@@ -33,8 +34,13 @@ class YtImportPlugin(BeetsPlugin):
             urls = [u for u in urls if not lib.items('comments:'+u)] # only new
             if urls:
                 print('Downloading {:n} song(s) to {:s}'.format(len(urls), ytdir))
-                # TODO: parse headers into dict and pass them to download function
-                youtube.download(urls, ytdir)
+                h = {}
+                # TODO: authenticate download requests.
+                # The following makes download requests return a 400 reponse.
+                # Maybe a cookiefile with some picked cookies from the headers can be generated?
+                #if opts.auth and headers:
+                #    h = dict([l.split(': ', 1) for l in headers.strip().split('\n')[1:]])
+                youtube.download(urls, ytdir, min_len=opts.min_len, max_len=opts.max_len, auth_headers=h)
             else:
                 print('Nothing to download')
             if opts.do_import:
@@ -75,6 +81,12 @@ class YtImportPlugin(BeetsPlugin):
         p.add_option('--set', type='string',
             default=self.config['set'].get(), \
             dest='set', help='set a field on import, using FIELD=VALUE format')
+        p.add_option('--min-len', type='int',
+            default=self.config['min_len'].get(), \
+            dest='min_len', help='minimum track length in seconds')
+        p.add_option('--max-len', type='int',
+            default=self.config['min_len'].get(), \
+            dest='max_len', help='maximum track length in seconds')
         p.add_option('-q', '--quiet', action='store_true',
             default=False, \
             dest='quiet', help="don't prompt for input when importing")

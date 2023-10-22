@@ -1,0 +1,13 @@
+directory: /data/music
+library: /data/musiclibrary.db
+
+plugins:
+- ytimport
+- web
+
+ytimport:
+  directory: /data/youtube
+  import: true
+  likes: true
+  max_likes: 3
+  set: 'like=1'
