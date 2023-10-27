@@ -16,8 +16,11 @@ python3 -m pip install beets-ytimport ytmusicapi yt-dlp
 
 ## Configuration
 
-Add a `ytimport` section to your Beets `config.yaml` as follows:
+Enable the plugin and add a `ytimport` section to your Beets `config.yaml` as follows:
 ```yaml
+plugins:
+  - ytimport
+
 ytimport:
   directory: /path/to/youtube/cache # required
   import: true
@@ -41,6 +44,11 @@ beet ytimport --likes --max-likes 1500
 Please note that the command prompts you for Google authentication, unless you specified the `auth_headers` option within your Beets configuration file pointing to a file containing HTTP headers (to get the HTTP headers, see [here](https://ytmusicapi.readthedocs.io/en/stable/setup/browser.html#copy-authentication-headers)).
 Import auto-tagger prompts can be disabled by specifying the `-q` option.
 You can interrupt and continue or repeat the command to synchronize likes from your Youtube account(s) into your Beets library incrementally.
+
+To download a particular track, run:
+```sh
+beet ytimport --nolikes https://www.youtube.com/watch?v=hC8CH0Z3L54
+```
 
 ### CLI
 
