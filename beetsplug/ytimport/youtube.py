@@ -1,5 +1,6 @@
 import os
 import json
+import pathlib
 import ytmusicapi
 import yt_dlp
 
@@ -87,6 +88,7 @@ def download(urls, target_dir, min_len=60, max_len=7200, auth_headers={}):
     }
     if len(auth_headers) > 0:
         ytdl_opts['http_headers'] = auth_headers
+    pathlib.Path(target_dir).mkdir(parents=True, exist_ok=True)
     ydl = yt_dlp.YoutubeDL(ytdl_opts)
     ydl.download(urls)
 
