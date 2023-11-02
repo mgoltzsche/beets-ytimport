@@ -10,23 +10,24 @@ DOCKER_OPTS=--rm -u `id -u`:`id -g` \
                 -v "`pwd`:/work" -w /work \
                 --entrypoint sh $(BUILD_IMG) -c
 
-.PHONY: egg
-egg: clean python-container
+.PHONY: wheel
+wheel: clean python-container
 	docker run $(DOCKER_OPTS) 'python3 setup.py bdist_wheel'
 
 .PHONY: beets-sh
 beets-sh: beets-container
-	mkdir -p data
-	docker run -ti --rm -u `id -u`:`id -g` \
+	mkdir -p data/beets
+	docker run -ti --rm -u `id -u`:`id -g` --network=host \
 		-v "`pwd`/data:/data" \
+		-v "`pwd`/example_beets_config.yaml:/data/beets/config.yaml" \
 		--entrypoint sh $(BEETS_IMG)
 
 .PHONY: beets-container
-beets-container: egg
+beets-container: wheel
 	docker build --rm -t $(BEETS_IMG) .
 
 .PHONY: release
-release: clean egg
+release: clean wheel
 	docker run -e PYPI_USER -e PYPI_PASS -e PYPI_REPO=$(PYPI_REPO) \
 		$(DOCKER_OPTS) \
 		'python3 -m twine upload --repository-url "$$PYPI_REPO" -u "$$PYPI_USER" -p "$$PYPI_PASS" dist/*'
