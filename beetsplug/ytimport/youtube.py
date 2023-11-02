@@ -3,6 +3,7 @@ import json
 import pathlib
 import ytmusicapi
 import yt_dlp
+from beetsplug.ytimport.split import chapters2tracks
 
 def login(headers=None):
     if headers:
@@ -14,9 +15,23 @@ def login(headers=None):
 def likes(auth, max_tracks):
     yt = ytmusicapi.YTMusic(auth)
     likes = yt.get_liked_songs(max_tracks)
-    return [t['videoId'] for t in likes['tracks']]
+    #for t in [t for t in likes['tracks'] if t['likeStatus'] == 'LIKE']:
+    #    if t['album']:
+    #        print('WITH ALBUM:', t)
+    #    if ':' in t['title']:
+    #        print('TITLE WITH COLON:', t['title'])
+    #raise "fake error"
+    return [t['videoId'] for t in likes['tracks'] if t['likeStatus'] == 'LIKE']
 
-def download(urls, target_dir, min_len=60, max_len=7200, auth_headers={}):
+class SplitChaptersToTracksPP(yt_dlp.postprocessor.PostProcessor):
+    def run(self, info):
+        fname = info['filename']
+        self.to_screen('Splitting ' + fname)
+        if chapters2tracks(fname):
+            os.remove(fname)
+        return [], info
+
+def download(urls, target_dir, min_len=60, max_len=7200, auth_headers={}, split=False):
     # Test data
     #urls = [
     #    'https://www.youtube.com/watch?v=Q89OdbX7A8E', # "Pendulum - Slam [HD - 320kbps]" von "Shadowrend68"
@@ -90,6 +105,8 @@ def download(urls, target_dir, min_len=60, max_len=7200, auth_headers={}):
         ytdl_opts['http_headers'] = auth_headers
     pathlib.Path(target_dir).mkdir(parents=True, exist_ok=True)
     ydl = yt_dlp.YoutubeDL(ytdl_opts)
+    if split:
+        ydl.add_post_processor(SplitChaptersToTracksPP(), when='post_process')
     ydl.download(urls)
 
 #yt-dlp --batch-file=/data/youtube-likes.urls --download-archive=youtube/.youtube-download.log \

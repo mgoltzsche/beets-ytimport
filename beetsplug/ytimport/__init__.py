@@ -4,6 +4,7 @@ from beets.ui import Subcommand
 from optparse import OptionParser
 from confuse import ConfigSource, load_yaml
 import beetsplug.ytimport.youtube
+import beetsplug.ytimport.split
 import subprocess
 
 class YtImportPlugin(BeetsPlugin):
@@ -40,7 +41,7 @@ class YtImportPlugin(BeetsPlugin):
                 # Maybe a cookiefile with some picked cookies from the headers can be generated?
                 #if opts.auth and headers:
                 #    h = dict([l.split(': ', 1) for l in headers.strip().split('\n')[1:]])
-                youtube.download(urls, ytdir, min_len=opts.min_len, max_len=opts.max_len, auth_headers=h)
+                youtube.download(urls, ytdir, min_len=opts.min_len, max_len=opts.max_len, auth_headers=h, split=opts.split_albums)
             else:
                 print('Nothing to download')
             if opts.do_import:
@@ -72,6 +73,12 @@ class YtImportPlugin(BeetsPlugin):
         p.add_option('--max-likes', type='int',
             default=self.config['max_likes'].get(), \
             dest='max_likes', help='maximum number of likes to obtain')
+        p.add_option('--split-albums', action='store_true',
+            default=self.config['split_albums'].get(), \
+            dest='split_albums', help='split albums into tracks')
+        p.add_option('--nosplit-albums', action='store_false',
+            default=self.config['split_albums'].get(), \
+            dest='split_albums', help="don't split albums into tracks")
         p.add_option('--import', action='store_true',
             default=self.config['import'].get(), \
             dest='do_import', help='import downloaded songs into beets')

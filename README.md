@@ -6,7 +6,6 @@ Differences compared to the [ydl plugin](https://github.com/vmassuchetto/beets-y
 * Supports downloading liked songs into your Beets library (using [ytmusicapi](https://github.com/sigma67/ytmusicapi)).
 * Stores m4a files instead of mp3 to avoid re-encoding lossy audio (which would decrease quality).
 * Uses [yt-dlp](https://github.com/yt-dlp/yt-dlp) instead of [ytdl](https://github.com/ytdl-org/youtube-dl) to download the audio files.
-* Does not split albums into tracks.
 
 ## Installation
 
@@ -30,6 +29,7 @@ ytimport:
   auth_headers: /path/to/your/http/headers
   min_len: 60
   max_len: 7200
+  split_albums: true
 ```
 
 For more information, see [CLI](#cli).
@@ -67,6 +67,8 @@ Options:
   --nolikes             don't download liked songs
   --max-likes=MAX_LIKES
                         maximum number of likes to obtain
+  --split-albums        split albums into tracks
+  --nosplit-albums      don't split albums into tracks
   --import              import downloaded songs into beets
   --noimport            don't import downloaded songs into beets
   --set=SET             set a field on import, using FIELD=VALUE format
