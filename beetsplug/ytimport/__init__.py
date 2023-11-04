@@ -92,7 +92,7 @@ class YtImportPlugin(BeetsPlugin):
             default=self.config['min_len'].get(), \
             dest='min_len', help='minimum track length in seconds')
         p.add_option('--max-len', type='int',
-            default=self.config['min_len'].get(), \
+            default=self.config['max_len'].get(), \
             dest='max_len', help='maximum track length in seconds')
         p.add_option('-q', '--quiet', action='store_true',
             default=False, \
