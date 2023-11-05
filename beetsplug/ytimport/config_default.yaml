@@ -4,6 +4,7 @@ likes: false
 max_likes: 25
 auth_headers: # file path
 set: ''
-min_len: 60 # min track length in seconds
-max_len: 7200 # max track length in seconds
-split_albums: true
+min_length: 60 # min track length in seconds
+max_length: 7200 # max track length in seconds
+split_tracks: false
+group_albums: false

@@ -3,6 +3,7 @@ library: /data/musiclibrary.db
 
 plugins:
 - ytimport
+- describe
 - web
 
 ytimport:
@@ -11,6 +12,7 @@ ytimport:
   likes: false
   max_likes: 3
   set: 'like=1'
-  min_len: 60
-  max_len: 7200
-  split_albums: true
+  min_length: 60
+  max_length: 7200
+  split_tracks: true
+  group_albums: false

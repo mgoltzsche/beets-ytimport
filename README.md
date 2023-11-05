@@ -27,9 +27,10 @@ ytimport:
   max_likes: 50
   set: 'mykey=myvalue'
   auth_headers: /path/to/your/http/headers
-  min_len: 60
-  max_len: 7200
-  split_albums: true
+  min_length: 60 # min track length in seconds
+  max_length: 7200 # max track length in seconds
+  split_tracks: false
+  group_albums: false
 ```
 
 For more information, see [CLI](#cli).
@@ -47,7 +48,7 @@ You can interrupt and continue or repeat the command to synchronize likes from y
 
 To download a particular track, run:
 ```sh
-beet ytimport --nolikes https://www.youtube.com/watch?v=hC8CH0Z3L54
+beet ytimport --no-likes https://www.youtube.com/watch?v=hC8CH0Z3L54
 ```
 
 ### CLI
@@ -57,23 +58,22 @@ Usage: beet ytimport [options]
 
 Options:
   -h, --help            show this help message and exit
-  --directory=DIRECTORY
-                        directory to download Youtube files to
-  --auth-headers=AUTH_HEADERS
-                        path to a file containing the HTTP headers of an
+  --directory=DIR       directory to download Youtube files to
+  --auth-headers=FILE   path to a file containing the HTTP headers of an
                         authenticated POST request to music.youtube.com,
                         copied from your browser's development tool
   --likes               download liked songs
-  --nolikes             don't download liked songs
-  --max-likes=MAX_LIKES
-                        maximum number of likes to obtain
-  --split-albums        split albums into tracks
-  --nosplit-albums      don't split albums into tracks
+  --no-likes            don't download liked songs
+  --max-likes=LIKES     maximum number of likes to obtain
+  --split-tracks        split tracks by chapter
+  --no-split-tracks     don't split tracks
+  --group-albums        import split tracks as albums
+  --no-group-albums     don't import split tracks as albums
   --import              import downloaded songs into beets
-  --noimport            don't import downloaded songs into beets
-  --set=SET             set a field on import, using FIELD=VALUE format
-  --min-len=MIN_LEN     minimum track length in seconds
-  --max-len=MAX_LEN     maximum track length in seconds
+  --no-import           don't import downloaded songs into beets
+  --set=KEY=VALUE       set a field on import, using KEY=VALUE format
+  --min-length=SECONDS  minimum track length in seconds
+  --max-length=SECONDS  maximum track length in seconds
   -q, --quiet           don't prompt for input when importing
   --pretend             don't import but print the files when importing
 ```

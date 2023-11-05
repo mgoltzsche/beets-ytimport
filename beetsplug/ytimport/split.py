@@ -12,7 +12,7 @@ artistTitleRegex = re.compile(r'(?P<artist>.+?) +(-+|–|:|\|) +(?P<title>.+)')
 albumTrailRegex = re.compile(r'(\(|\[)?Full Album([^\w]|$)', re.IGNORECASE)
 yearRegex = re.compile(r'[^\w]((19|20)[0-9]{2})([^\w]|$)')
 
-def chapters2tracks(file):
+def chapters2tracks(file, dest_dir):
     info = get_info(file)
     chapters = info['chapters']
     if len(chapters) < 2:
@@ -24,11 +24,10 @@ def chapters2tracks(file):
     fix_track_numbers(chapters)
     fix_album_artists(chapters, info['format'])
 
-    dest = os.path.splitext(file)[0]
-    pathlib.Path(dest).mkdir(parents=True, exist_ok=True)
+    pathlib.Path(dest_dir).mkdir(parents=True, exist_ok=True)
 
     for c in chapters:
-        chapter2track(file, c, len(chapters), dest)
+        chapter2track(file, c, len(chapters), dest_dir)
     return True
 
 def get_info(file):

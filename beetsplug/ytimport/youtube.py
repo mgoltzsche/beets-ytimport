@@ -41,7 +41,11 @@ class SplitChaptersToTracksPP(yt_dlp.postprocessor.PostProcessor):
     def run(self, info):
         fname = info['filename']
         self.to_screen('Splitting ' + fname)
-        if chapters2tracks(fname):
+        dir = os.path.join(os.path.dirname(fname), '..', 'albums')
+        pathlib.Path(dir).mkdir(parents=True, exist_ok=True)
+        dest_dir = os.path.join(dir, os.path.basename(os.path.splitext(fname)[0]))
+        print('##'+dest_dir)
+        if chapters2tracks(fname, dest_dir):
             os.remove(fname)
         return [], info
 
@@ -55,9 +59,9 @@ def download(urls, target_dir, min_len=60, max_len=7200, auth_headers={}, split=
             return 'Track is too long'
 
     ytdl_opts = {
-        'outtmpl': target_dir+'/%(artist|)s%(artist& - |)s%(title)s [%(id)s].%(ext)s',
+        'outtmpl': target_dir+'/singles/%(artist|)s%(artist& - |)s%(title)s [%(id)s].%(ext)s',
         'format': 'm4a/bestaudio/best', # Prefer m4a to avoid conversion within pp.
-        'download_archive': target_dir+'/.youtube-download.log',
+        'download_archive': target_dir+'/youtube-downloads.txt',
         'continuedl': True,
         'restrictfilenames': True,
         'windowsfilenames': True,

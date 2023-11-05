@@ -24,8 +24,8 @@ assertTag() {
 
 @test 'download track' {
 	# 'Cabal' from 'Marcus Intalex (Thema)'
-	beet ytimport --noimport https://www.youtube.com/watch?v=7VwubS2kBYU
-	FILE="$YTDIR/Marcus Intalex - Cabal [7VwubS2kBYU].m4a"
+	beet ytimport --no-import https://www.youtube.com/watch?v=7VwubS2kBYU
+	FILE="$YTDIR/singles/Marcus Intalex - Cabal [7VwubS2kBYU].m4a"
 	assertTag "$FILE" title 'Cabal'
 	assertTag "$FILE" artist 'Marcus Intalex'
 	assertTag "$FILE" album 'Cabal'
@@ -34,8 +34,8 @@ assertTag() {
 
 @test 'download track and clean artist' {
 	# 'Exchange' from 'Colyn - Topic'
-	beet ytimport --noimport https://www.youtube.com/watch?v=b7rzFFJ6gso
-	FILE="$YTDIR/Colyn - Exchange [b7rzFFJ6gso].m4a"
+	beet ytimport --no-import https://www.youtube.com/watch?v=b7rzFFJ6gso
+	FILE="$YTDIR/singles/Colyn - Exchange [b7rzFFJ6gso].m4a"
 	assertTag "$FILE" title 'Exchange'
 	assertTag "$FILE" artist 'Colyn'
 	assertTag "$FILE" album 'Resolve'
@@ -43,24 +43,24 @@ assertTag() {
 
 @test 'download track and derive artist from title' {
 	# '07.  Lemon D - Deep Space'
-	beet ytimport --noimport https://www.youtube.com/watch?v=_3pzM2GoSvU
-	FILE="$YTDIR/Lemon D - Deep Space [_3pzM2GoSvU].m4a"
+	beet ytimport --no-import https://www.youtube.com/watch?v=_3pzM2GoSvU
+	FILE="$YTDIR/singles/Lemon D - Deep Space [_3pzM2GoSvU].m4a"
 	assertTag "$FILE" title 'Deep Space'
 	assertTag "$FILE" artist 'Lemon D'
 }
 
 @test 'download track and use title as is' {
 	# 'STEPART & PUPAJIM : "Non Stop" (Playground LP - Stand High Records)' from 'STAND HIGH PATROL'
-	beet ytimport --noimport https://www.youtube.com/watch?v=9HtLHY7cREA
-	FILE="$YTDIR"'/STAND HIGH PATROL - STEPART & PUPAJIM - _Non Stop_ (Playground LP Stand High Records) [9HtLHY7cREA].m4a'
+	beet ytimport --no-import https://www.youtube.com/watch?v=9HtLHY7cREA
+	FILE="$YTDIR"'/singles/STAND HIGH PATROL - STEPART & PUPAJIM - _Non Stop_ (Playground LP Stand High Records) [9HtLHY7cREA].m4a'
 	assertTag "$FILE" title 'STEPART & PUPAJIM : "Non Stop" (Playground LP - Stand High Records)'
 	assertTag "$FILE" artist 'STAND HIGH PATROL'
 }
 
 @test 'download and split compilation' {
 	# 'Tour De Manège Vol.4 : The Wizards (Full Album)' from 'Tour De Manège'
-	beet ytimport --noimport https://www.youtube.com/watch?v=pKgJppNfR1g
-	DIR="$YTDIR/Tour De Manege - Tour De Manege Vol 4 - The Wizards (Full Album) [pKgJppNfR1g]"
+	beet ytimport --no-import https://www.youtube.com/watch?v=pKgJppNfR1g
+	DIR="$YTDIR/albums/Tour De Manege - Tour De Manege Vol 4 - The Wizards (Full Album) [pKgJppNfR1g]"
 	assertDirExists "$DIR"
 	FILE="$DIR/13 - Dee La Kream - It s Yours.m4a"
 	assertTag "$FILE" title "It's Yours"
@@ -78,8 +78,8 @@ assertTag() {
 
 @test 'download and split album with year in title' {
 	# 'THE SELECTER - Too Much Pressure [FULL ALBUM] 1980 (LYRICS added in the comment section)'
-	beet ytimport --noimport https://www.youtube.com/watch?v=lutwqvQq5t8
-	DIR="$YTDIR/THE SELECTER - Too Much Pressure [FULL ALBUM] 1980 (LYRICS added in the comment section) [lutwqvQq5t8]"
+	beet ytimport --no-import https://www.youtube.com/watch?v=lutwqvQq5t8
+	DIR="$YTDIR/albums/THE SELECTER - Too Much Pressure [FULL ALBUM] 1980 (LYRICS added in the comment section) [lutwqvQq5t8]"
 	assertDirExists "$DIR"
 	FILE="$DIR/09 - Too Much Pressure.m4a"
 	assertTag "$FILE" title 'Too Much Pressure'

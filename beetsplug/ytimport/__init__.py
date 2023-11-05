@@ -41,64 +41,74 @@ class YtImportPlugin(BeetsPlugin):
                 # Maybe a cookiefile with some picked cookies from the headers can be generated?
                 #if opts.auth and headers:
                 #    h = dict([l.split(': ', 1) for l in headers.strip().split('\n')[1:]])
-                youtube.download(urls, ytdir, min_len=opts.min_len, max_len=opts.max_len, auth_headers=h, split=opts.split_albums)
+                youtube.download(urls, ytdir, min_len=opts.min_length, max_len=opts.max_length, auth_headers=h, split=opts.split_tracks)
             else:
                 print('Nothing to download')
             if opts.do_import:
                 print('Importing downloaded songs into beets library')
-                cmd = ['beet', 'import', ytdir, '-si', '--set', 'datasource=youtube']
+                cmd = ['beet', 'import', '-i', '--set', 'datasource=youtube']
                 if opts.set:
                     cmd += ['--set', opts.set]
                 if opts.quiet:
                     cmd += ['-q']
                 if opts.pretend:
                     cmd += ['--pretend']
-                subprocess.run(cmd)
+                if opts.group_albums:
+                    subprocess.run(cmd + ['-s', os.path.join(ytdir, 'singles')])
+                    subprocess.run(cmd + ['-g', os.path.join(ytdir, 'albums')])
+                else:
+                    subprocess.run(cmd + ['-s', ytdir])
             else:
                 print('Skipping import')
 
         p = OptionParser()
-        p.add_option('--directory', type='string',
-            default=self.config['directory'].get(), \
+        p.add_option('--directory', type='string', metavar='DIR',
+            default=self.config['directory'].get(),
             dest='directory', help='directory to download Youtube files to')
-        p.add_option('--auth-headers', type='string',
-            default=self.config['auth_headers'].get(), \
+        p.add_option('--auth-headers', type='string', metavar='FILE',
+            default=self.config['auth_headers'].get(),
             dest='auth_headers', help="path to a file containing the HTTP headers of an authenticated POST request to music.youtube.com, copied from your browser's development tool")
         p.add_option('--likes', action='store_true',
-            default=self.config['likes'].get(), \
+            default=self.config['likes'].get(),
             dest='likes', help='download liked songs')
-        p.add_option('--nolikes', action='store_false',
-            default=self.config['likes'].get(), \
+        p.add_option('--no-likes', action='store_false',
+            default=self.config['likes'].get(),
             dest='likes', help="don't download liked songs")
-        p.add_option('--max-likes', type='int',
-            default=self.config['max_likes'].get(), \
+        p.add_option('--max-likes', type='int', metavar='LIKES',
+            default=self.config['max_likes'].get(),
             dest='max_likes', help='maximum number of likes to obtain')
-        p.add_option('--split-albums', action='store_true',
-            default=self.config['split_albums'].get(), \
-            dest='split_albums', help='split albums into tracks')
-        p.add_option('--nosplit-albums', action='store_false',
-            default=self.config['split_albums'].get(), \
-            dest='split_albums', help="don't split albums into tracks")
+        p.add_option('--split-tracks', action='store_true',
+            default=self.config['split_tracks'].get(),
+            dest='split_tracks', help='split tracks by chapter')
+        p.add_option('--no-split-tracks', action='store_false',
+            default=self.config['split_tracks'].get(),
+            dest='split_tracks', help="don't split tracks")
+        p.add_option('--group-albums', action='store_true',
+            default=self.config['group_albums'].get(),
+            dest='group_albums', help='import split tracks as albums')
+        p.add_option('--no-group-albums', action='store_false',
+            default=self.config['group_albums'].get(),
+            dest='group_albums', help="don't import split tracks as albums")
         p.add_option('--import', action='store_true',
-            default=self.config['import'].get(), \
+            default=self.config['import'].get(),
             dest='do_import', help='import downloaded songs into beets')
-        p.add_option('--noimport', action='store_false',
-            default=self.config['import'].get(), \
+        p.add_option('--no-import', action='store_false',
+            default=self.config['import'].get(),
             dest='do_import', help="don't import downloaded songs into beets")
-        p.add_option('--set', type='string',
-            default=self.config['set'].get(), \
-            dest='set', help='set a field on import, using FIELD=VALUE format')
-        p.add_option('--min-len', type='int',
-            default=self.config['min_len'].get(), \
-            dest='min_len', help='minimum track length in seconds')
-        p.add_option('--max-len', type='int',
-            default=self.config['max_len'].get(), \
-            dest='max_len', help='maximum track length in seconds')
+        p.add_option('--set', type='string', metavar='KEY=VALUE',
+            default=self.config['set'].get(),
+            dest='set', help='set a field on import, using KEY=VALUE format')
+        p.add_option('--min-length', type='int', metavar='SECONDS',
+            default=self.config['min_length'].get(),
+            dest='min_length', help='minimum track length in seconds')
+        p.add_option('--max-length', type='int', metavar='SECONDS',
+            default=self.config['max_length'].get(),
+            dest='max_length', help='maximum track length in seconds')
         p.add_option('-q', '--quiet', action='store_true',
-            default=False, \
+            default=False,
             dest='quiet', help="don't prompt for input when importing")
         p.add_option('--pretend', action='store_true',
-            default=False, \
+            default=False,
             dest='pretend', help="don't import but print the files when importing")
 
         c = Subcommand('ytimport', parser=p, help='import songs from Youtube')
