@@ -1,4 +1,6 @@
+Makefile
 /*.egg-info/
 /build
 /data
+/tests
 /.git

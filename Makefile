@@ -14,10 +14,30 @@ DOCKER_OPTS=--rm -u `id -u`:`id -g` \
 wheel: clean python-container
 	docker run $(DOCKER_OPTS) 'python3 setup.py bdist_wheel'
 
+.PHONY: test
+test: beets-container
+	# Run unit tests
+	@docker run --rm -u `id -u`:`id -g` \
+		-v "`pwd`:/plugin" -w /plugin \
+		--entrypoint sh $(BEETS_IMG) -c \
+		'set -x; python -m unittest discover /plugin/tests'
+
+.PHONY: test-e2e
+test-e2e: beets-container
+	# Run e2e tests
+	mkdir -p data/beets
+	@docker run --rm -u `id -u`:`id -g` \
+                -v "`pwd`:/plugin" -w /plugin \
+		-v "`pwd`/data:/data" \
+		-v "`pwd`/example_beets_config.yaml:/data/beets/config.yaml" \
+                --entrypoint sh $(BEETS_IMG) -c \
+                'set -x; bats -T /plugin/tests/e2e'
+
 .PHONY: beets-sh
 beets-sh: beets-container
 	mkdir -p data/beets
 	docker run -ti --rm -u `id -u`:`id -g` --network=host \
+		-v "`pwd`:/plugin" \
 		-v "`pwd`/data:/data" \
 		-v "`pwd`/example_beets_config.yaml:/data/beets/config.yaml" \
 		--entrypoint sh $(BEETS_IMG)
@@ -35,6 +55,7 @@ release: clean wheel
 .PHONY: clean
 clean:
 	rm -rf build dist *.egg-info
+	find . -name __pycache__ -exec rm -rf {} \; || true
 
 .PHONY: clean-data
 clean-data: clean

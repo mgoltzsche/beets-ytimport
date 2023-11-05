@@ -1,9 +1,14 @@
 import os
+import re
 import json
 import pathlib
 import ytmusicapi
 import yt_dlp
 from beetsplug.ytimport.split import chapters2tracks
+from beetsplug.ytimport.safename import safe_name
+
+uploader_as_artist_rule = r'uploader:^(?P<artist>.+?)( +- +Topic)?$'
+title_extraction_rule = r'title:^(\[[^\]]+\])? *((?P<track_number>0[1-9])\.? +)?(?P<artist>[^(]+?) +(-+|–|\||~|) +(?P<title>.+?) *((\(|\[)(HD|HQ|Official|FREE).+)?$|'
 
 def login(headers=None):
     if headers:
@@ -15,13 +20,22 @@ def login(headers=None):
 def likes(auth, max_tracks):
     yt = ytmusicapi.YTMusic(auth)
     likes = yt.get_liked_songs(max_tracks)
-    #for t in [t for t in likes['tracks'] if t['likeStatus'] == 'LIKE']:
-    #    if t['album']:
-    #        print('WITH ALBUM:', t)
-    #    if ':' in t['title']:
-    #        print('TITLE WITH COLON:', t['title'])
-    #raise "fake error"
     return [t['videoId'] for t in likes['tracks'] if t['likeStatus'] == 'LIKE']
+
+class RenamePP(yt_dlp.postprocessor.PostProcessor):
+    def run(self, info):
+        oldname = info['filename']
+        dir = os.path.dirname(oldname)
+        artist = info['artist']
+        artist = safe_name(artist)
+        title = safe_name(info['title'])
+        newname = '{} - {} [{}].m4a'.format(artist, title, info['id'])
+        newname = os.path.join(dir, newname)
+        if newname != oldname:
+            self.to_screen("Renaming '{}' to '{}'".format(oldname, newname))
+            os.rename(oldname, newname)
+            info['filename'] = newname
+        return [], info
 
 class SplitChaptersToTracksPP(yt_dlp.postprocessor.PostProcessor):
     def run(self, info):
@@ -32,17 +46,6 @@ class SplitChaptersToTracksPP(yt_dlp.postprocessor.PostProcessor):
         return [], info
 
 def download(urls, target_dir, min_len=60, max_len=7200, auth_headers={}, split=False):
-    # Test data
-    #urls = [
-    #    'https://www.youtube.com/watch?v=Q89OdbX7A8E', # "Pendulum - Slam [HD - 320kbps]" von "Shadowrend68"
-    #    'https://www.youtube.com/watch?v=_3pzM2GoSvU', # "07. Lemon D - Deep Space" von "DNBStylez"
-    #    'https://www.youtube.com/watch?v=NGBnYonnSms', # "Bassnectar – Loco Ono (Bassnectar & Stylust Beats Remix)" von "Bassnectar"
-    #    'https://www.youtube.com/watch?v=7VwubS2kBYU', # "Cabal" von "Marcus Intalex (Thema)"
-    #    'https://www.youtube.com/watch?v=5MQjNIHaj4g', # "Oura  - Folded - DNB" von "Savory Audio"
-    #    'https://www.youtube.com/watch?v=Usqwy2-E4SE', # "Goldie - Timeless" von "Naci E."
-    #    'https://www.youtube.com/watch?v=ruc0TnSSi9Y', # "Squarepusher - The Exploding Psychology (HD)"
-    #    'https://www.youtube.com/watch?v=5tJPMBB7MgE', # "[Dubstep ] Occult -- Cauldron [HD. HQ, 1920px] 30 MINUTES + FREE DOWNLOAD"
-    #]
 
     def download_filter(info, *, incomplete):
         duration = info.get('duration')
@@ -56,7 +59,7 @@ def download(urls, target_dir, min_len=60, max_len=7200, auth_headers={}, split=
         'format': 'm4a/bestaudio/best', # Prefer m4a to avoid conversion within pp.
         'download_archive': target_dir+'/.youtube-download.log',
         'continuedl': True,
-        #'restrictfilenames': True,
+        'restrictfilenames': True,
         'windowsfilenames': True,
         'writethumbnail': True,
         'keepvideo': False,
@@ -79,8 +82,10 @@ def download(urls, target_dir, min_len=60, max_len=7200, auth_headers={}, split=
                     # Add Youtube URL and original title to comment field.
                     # This is to preserve the information when importing it into beets where it could be useful for disambiguation later.
                     '%(original_url)s %(title)s:%(meta_comment)s',
-                    # Extract track number and artist from title.
-                    'title:^(\\[[^\\]]+\\] *)?((?P<track_number>0[1-9])\\.? +)?(?P<artist>.+?) +(-+|–|:|\\||~|) +(?P<title>.+?)(\\((HD|HQ|Official)([^\\)]+)?\\)|( +\\[(HD|Official)([^\\]]+)?\\]))? *$|',
+                    # Use uploader name without suffix as artist tag.
+                    uploader_as_artist_rule,
+                    # Extract track number and artist from title tag.
+                    title_extraction_rule,
                     # Add additional Youtube fields to the file's metadata.
                     '%(like_count)s:%(meta_likes)s',
                     '%(dislike_count)s:%(meta_dislikes)s',
@@ -106,6 +111,7 @@ def download(urls, target_dir, min_len=60, max_len=7200, auth_headers={}, split=
     pathlib.Path(target_dir).mkdir(parents=True, exist_ok=True)
     ydl = yt_dlp.YoutubeDL(ytdl_opts)
     if split:
+        ydl.add_post_processor(RenamePP(), when='post_process')
         ydl.add_post_processor(SplitChaptersToTracksPP(), when='post_process')
     ydl.download(urls)
 

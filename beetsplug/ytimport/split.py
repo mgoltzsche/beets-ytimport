@@ -5,6 +5,12 @@ import pathlib
 import glob
 import re
 from functools import reduce
+from beetsplug.ytimport.safename import safe_name
+
+trackNumRegex = re.compile(r'^[A-Z][0-9](\.| ) *(-+ +)?')
+artistTitleRegex = re.compile(r'(?P<artist>.+?) +(-+|–|:|\|) +(?P<title>.+)')
+albumTrailRegex = re.compile(r'(\(|\[)?Full Album([^\w]|$)', re.IGNORECASE)
+yearRegex = re.compile(r'[^\w]((19|20)[0-9]{2})([^\w]|$)')
 
 def chapters2tracks(file):
     info = get_info(file)
@@ -26,7 +32,7 @@ def chapters2tracks(file):
     return True
 
 def get_info(file):
-    cmd = ['ffprobe', '-show_chapters', '-show_format', '-print_format', 'json', '-i', file, '-hide_banner', '-loglevel', 'error']
+    cmd = ['ffprobe', '-show_chapters', '-show_format', '-print_format', 'json', '-i', file, '-v', 'quiet']
     proc = subprocess.Popen(cmd,stdout=subprocess.PIPE)
     out = proc.stdout.read()
     return json.loads(out)
@@ -44,7 +50,6 @@ def append_title_to_comment(chapters):
 
 def fix_track_numbers(chapters):
     '''Set track tag and remove track number from title tag.'''
-    p = re.compile(r'^[A-Z][0-9](\.| ) *(-+ +)?')
     matched = 0
     padding = str(len(str(len(chapters))))
     for i in range(len(chapters)): # strip e.g. '01.'
@@ -53,18 +58,15 @@ def fix_track_numbers(chapters):
         tags = c['tags']
         tags['track'] = ('{:0'+padding+'d}/{:d}').format(track, len(chapters))
         tags['title'] = re.sub('^0*'+str(track)+r'(\.| ) *(-+ +)?', '', tags['title'])
-        if p.match(tags['title']):
+        if trackNumRegex.match(tags['title']):
             matched += 1
     if matched >= 2:
         for c in chapters: # strip e.g. 'A1.'
             tags = c['tags']
-            tags['title'] = p.sub('', tags['title'])
+            tags['title'] = trackNumRegex.sub('', tags['title'])
 
 def fix_album_artists(chapters, format):
     '''Extract artist from title.'''
-    p = re.compile(r'(?P<artist>.+?) +(-+|–|:|\|) +(?P<title>.+)')
-    albumTrailRegex = re.compile(r'(\(|\[)?Full Album([^\w]|$)', re.IGNORECASE)
-    yearRegex = re.compile(r'[^\w]((19|20)[0-9]{2})([^\w]|$)')
     formatTags = format['tags']
     year = ''
     album = formatTags['title']
@@ -77,10 +79,10 @@ def fix_album_artists(chapters, format):
             year = m.group(1)
     for c in chapters:
         tags = c['tags']
-        m = p.match(tags['title'])
+        m = artistTitleRegex.match(tags['title'])
         if m:
             tags |= m.groupdict()
-        tags['albumartist'] = formatTags['artist']
+        tags['album_artist'] = formatTags['artist']
         tags['album'] = album
         if year:
             tags['year'] = year
@@ -89,10 +91,12 @@ def fix_album_artists(chapters, format):
 def chapter2track(file, chapter, chapterCount, dest_dir):
     tags = chapter['tags']
     track = re.sub('/[0-9]+$', '', tags['track'])
-    if tags['artist'] == tags['albumartist']:
-        dest = '{:s}/{:s} - {:s}.m4a'.format(dest_dir, track, tags['title'])
+    title = safe_name(tags['title'])
+    if tags['artist'] == tags['album_artist']:
+        dest = '{:s}/{:s} - {:s}.m4a'.format(dest_dir, track, title)
     else:
-        dest = '{:s}/{:s} - {:s} - {:s}.m4a'.format(dest_dir, track, tags['artist'], tags['title'])
+        artist = safe_name(tags['artist'])
+        dest = '{:s}/{:s} - {:s} - {:s}.m4a'.format(dest_dir, track, artist, title)
     tmp_dest = dest+'.part'
     if os.path.isfile(dest):
         return

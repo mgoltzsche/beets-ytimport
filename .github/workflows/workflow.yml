@@ -39,6 +39,12 @@ jobs:
       run: |
         sed -Ei "s/^( +version=).+/\1'$RELEASE_VERSION',/" setup.py
 
+    - name: Unit test
+      run: make test
+
+    - name: E2E test
+      run: make test-e2e
+
     - name: Build wheel
       run: |
         set -u

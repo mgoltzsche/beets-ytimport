@@ -8,7 +8,7 @@ plugins:
 ytimport:
   directory: /data/youtube
   import: true
-  likes: true
+  likes: false
   max_likes: 3
   set: 'like=1'
   min_len: 60

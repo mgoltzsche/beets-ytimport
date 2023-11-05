@@ -10,7 +10,7 @@ Differences compared to the [ydl plugin](https://github.com/vmassuchetto/beets-y
 ## Installation
 
 ```sh
-python3 -m pip install beets-ytimport ytmusicapi yt-dlp
+python3 -m pip install beets-ytimport ytmusicapi yt-dlp slugify
 ```
 
 ## Configuration
@@ -79,6 +79,16 @@ Options:
 ```
 
 ## Development
+
+Run the unit tests (containerized):
+```sh
+make test
+```
+
+Run the e2e tests (containerized):
+```sh
+make test-e2e
+```
 
 To test your plugin changes manually, you can run a shell within a Beets docker container as follows:
 ```sh
