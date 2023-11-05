@@ -24,11 +24,11 @@ ytimport:
   directory: /path/to/youtube/cache # required
   import: true
   likes: false
-  max_likes: 50
+  max_likes: 15
   set: 'mykey=myvalue'
   auth_headers: /path/to/your/http/headers
-  min_length: 60 # min track length in seconds
-  max_length: 7200 # max track length in seconds
+  min_length: 60 # 1m; min track length in seconds
+  max_length: 7200 # 2h; max track length in seconds
   split_tracks: false
   group_albums: false
 ```
@@ -39,7 +39,7 @@ For more information, see [CLI](#cli).
 
 Once you enabled the `ytimport` plugin within your Beets configuration, you can download your liked songs from Youtube and import them into your Beets library as follows:
 ```sh
-beet ytimport --likes --max-likes 1500
+beet ytimport --likes --max-likes 3
 ```
 
 Please note that the command prompts you for Google authentication, unless you specified the `auth_headers` option within your Beets configuration file pointing to a file containing HTTP headers (to get the HTTP headers, see [here](https://ytmusicapi.readthedocs.io/en/stable/setup/browser.html#copy-authentication-headers)).

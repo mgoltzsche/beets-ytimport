@@ -1,11 +1,12 @@
 import os
+import pathlib
+import subprocess
 from beets.plugins import BeetsPlugin
 from beets.ui import Subcommand
 from optparse import OptionParser
 from confuse import ConfigSource, load_yaml
 import beetsplug.ytimport.youtube
 import beetsplug.ytimport.split
-import subprocess
 
 class YtImportPlugin(BeetsPlugin):
     def __init__(self):
@@ -24,12 +25,18 @@ class YtImportPlugin(BeetsPlugin):
                 f = open(headers, 'r')
                 headers = f.read()
                 f.close()
+            singles_dir = os.path.join(ytdir, 'singles')
+            albums_dir = os.path.join(ytdir, 'albums')
+            pathlib.Path(singles_dir).mkdir(parents=True, exist_ok=True)
+            pathlib.Path(albums_dir).mkdir(parents=False, exist_ok=True)
             if opts.likes:
                 print('Obtaining your liked songs from Youtube...')
                 if not headers:
                     print('Using interactive authentication. To enable non-interactive authentication, set --auth-headers')
                 auth = youtube.login(headers)
                 likedIds = youtube.likes(auth, opts.max_likes)
+                if len(likedIds) > opts.max_likes:
+                    likedIds = likedIds[:opts.max_likes]
                 print('Found {:n} liked songs'.format(len(likedIds)))
                 urls += ['https://www.youtube.com/watch?v='+id for id in likedIds]
             urls = [u for u in urls if not lib.items('comments:'+u)] # only new
@@ -54,8 +61,8 @@ class YtImportPlugin(BeetsPlugin):
                 if opts.pretend:
                     cmd += ['--pretend']
                 if opts.group_albums:
-                    subprocess.run(cmd + ['-s', os.path.join(ytdir, 'singles')])
-                    subprocess.run(cmd + ['-g', os.path.join(ytdir, 'albums')])
+                    subprocess.run(cmd + ['-s', singles_dir])
+                    subprocess.run(cmd + ['-g', albums_dir])
                 else:
                     subprocess.run(cmd + ['-s', ytdir])
             else:

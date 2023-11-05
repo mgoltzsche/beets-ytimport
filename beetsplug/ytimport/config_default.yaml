@@ -1,10 +1,10 @@
 #directory: /path/to/your/youtube/cache
 import: true
 likes: false
-max_likes: 25
+max_likes: 15
 auth_headers: # file path
 set: ''
-min_length: 60 # min track length in seconds
-max_length: 7200 # max track length in seconds
+min_length: 60 # 1m; min track length in seconds
+max_length: 7200 # 2h; max track length in seconds
 split_tracks: false
 group_albums: false
