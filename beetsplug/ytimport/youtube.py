@@ -44,7 +44,6 @@ class SplitChaptersToTracksPP(yt_dlp.postprocessor.PostProcessor):
         dir = os.path.join(os.path.dirname(fname), '..', 'albums')
         pathlib.Path(dir).mkdir(parents=True, exist_ok=True)
         dest_dir = os.path.join(dir, os.path.basename(os.path.splitext(fname)[0]))
-        print('##'+dest_dir)
         if chapters2tracks(fname, dest_dir):
             os.remove(fname)
         return [], info
@@ -88,6 +87,7 @@ def download(urls, target_dir, min_len=60, max_len=7200, auth_headers={}, split=
                     '%(original_url)s %(title)s:%(meta_comment)s',
                     # Use uploader name without suffix as artist tag.
                     uploader_as_artist_rule,
+                    r'artist:^(?P<album_artist>.+?)$',
                     # Extract track number and artist from title tag.
                     title_extraction_rule,
                     # Add additional Youtube fields to the file's metadata.
