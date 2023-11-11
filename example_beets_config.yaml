@@ -3,7 +3,11 @@ library: /data/musiclibrary.db
 
 plugins:
 - ytimport
+- lastgenre
+- info
 - describe
+- smartplaylist
+- random
 - web
 
 ytimport:
@@ -16,3 +20,17 @@ ytimport:
   max_length: 7200
   split_tracks: true
   group_albums: false
+
+smartplaylist:
+  relative_to: /data/playlists
+  playlist_dir: /data/playlists
+  forward_slash: false
+  playlists:
+  - name: all.m3u
+    query: ''
+  - name: all-by-album-genre.m3u
+    query: 'albumartist+ year+ album+ track+ genre+ artist+ title+'
+
+lastgenre:
+  auto: true
+  canonical: true
