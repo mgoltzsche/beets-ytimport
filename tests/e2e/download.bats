@@ -32,6 +32,12 @@ assertTag() {
 	assertTag "$FILE" comment 'https://www.youtube.com/watch?v=7VwubS2kBYU Cabal'
 }
 
+@test 'import track' {
+	# 'Cabal' from 'Marcus Intalex (Thema)'
+	beet ytimport -q https://www.youtube.com/watch?v=7VwubS2kBYU
+	[ "$(beet ls Cabal)" = 'Marcus Intalex - Cabal - Cabal' ]
+}
+
 @test 'download track and clean artist' {
 	# 'Exchange' from 'Colyn - Topic'
 	beet ytimport --no-import https://www.youtube.com/watch?v=b7rzFFJ6gso
