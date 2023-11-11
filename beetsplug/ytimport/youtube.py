@@ -51,23 +51,21 @@ class SplitChaptersToTracksPP(yt_dlp.postprocessor.PostProcessor):
         dir = os.path.join(os.path.dirname(fname), '..', 'albums')
         pathlib.Path(dir).mkdir(parents=True, exist_ok=True)
         dest_dir = os.path.join(dir, os.path.basename(os.path.splitext(fname)[0]))
-        was_split, finfo = chapters2tracks(fname, dest_dir)
-        duration = int(float(finfo['format']['duration']))
-        if was_split:
-            os.remove(fname)
-        elif duration > self.max_length_nochapter:
-            self.to_screen("Deleting '{}' since it is too long and has no chapters".format(fname))
+        if chapters2tracks(fname, dest_dir):
             os.remove(fname)
         return [], info
 
-def download(urls, target_dir, min_len=60, max_len=7200, max_length_nochapter=600, split=False, auth_headers={}):
+def download(urls, target_dir, min_len=60, max_len=7200, max_len_nochapter=600, split=False, auth_headers={}):
 
-    def download_filter(info, *, incomplete):
+    def download_filter(info):
         duration = info.get('duration')
+        chapters = info.get('chapters')
         if duration and duration < min_len:
             return 'Track is too short'
         if duration and duration > max_len:
             return 'Track is too long'
+        if duration and duration > max_len_nochapter and (not chapters or len(chapters) < 2):
+            return 'Track is too long and has no chapters'
 
     ytdl_opts = {
         'outtmpl': target_dir+'/singles/%(artist|)s%(artist& - |)s%(title)s [%(id)s].%(ext)s',
@@ -128,7 +126,7 @@ def download(urls, target_dir, min_len=60, max_len=7200, max_length_nochapter=60
     ydl = yt_dlp.YoutubeDL(ytdl_opts)
     if split:
         ydl.add_post_processor(RenamePP(), when='post_process')
-        ydl.add_post_processor(SplitChaptersToTracksPP(max_length_nochapter), when='post_process')
+        ydl.add_post_processor(SplitChaptersToTracksPP(max_len_nochapter), when='post_process')
     ydl.download(urls)
 
 #yt-dlp --batch-file=/data/youtube-likes.urls --download-archive=youtube/.youtube-download.log \

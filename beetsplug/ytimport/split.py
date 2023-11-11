@@ -16,7 +16,7 @@ def chapters2tracks(file, dest_dir):
     info = get_info(file)
     chapters = info['chapters']
     if len(chapters) < 2:
-        return False, info
+        return False
 
     print('Extracting tracks from '+file)
     extend_chapter_tags(info)
@@ -28,7 +28,7 @@ def chapters2tracks(file, dest_dir):
 
     for c in chapters:
         chapter2track(file, c, len(chapters), dest_dir)
-    return True, info
+    return True
 
 def get_info(file):
     cmd = ['ffprobe', '-show_chapters', '-show_format', '-print_format', 'json', '-i', file, '-v', 'quiet']

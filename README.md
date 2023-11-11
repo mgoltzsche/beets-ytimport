@@ -29,7 +29,7 @@ ytimport:
   auth_headers: /path/to/your/http/headers
   min_length: 60 # 1m; min track length in seconds
   max_length: 7200 # 2h; max track length in seconds
-  max_length_nochapter: 600 # 10m; max track length when splitting but no chapters defined
+  max_length_nochapter: 600 # 10m; max track length when no chapters defined
   split_tracks: false
   group_albums: false
 ```
@@ -76,8 +76,7 @@ Options:
   --min-length=SECONDS  minimum track length in seconds
   --max-length=SECONDS  maximum track length in seconds
   --max-length-nochapter=SECONDS
-                        maximum track length in seconds when --split-tracks
-                        enabled and no chapters defined
+                        max track length in seconds when no chapters defined
   -q, --quiet           don't prompt for input when importing
   --pretend             don't import but print the files when importing
 ```
