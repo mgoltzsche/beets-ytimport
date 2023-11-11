@@ -7,7 +7,7 @@ import re
 from functools import reduce
 from beetsplug.ytimport.safename import safe_name
 
-trackNumRegex = re.compile(r'^[A-Z][0-9](\.| ) *(-+ +)?')
+trackNumRegex = re.compile(r'^[A-Z][0-9](\.+| ) *(-+ +)?')
 artistTitleRegex = re.compile(r'(?P<artist>.+?) +(-+|–|:|\|) +(?P<title>.+)')
 albumTrailRegex = re.compile(r'(\(|\[)?Full Album([^\w]|$)', re.IGNORECASE)
 yearRegex = re.compile(r'[^\w]((19|20)[0-9]{2})([^\w]|$)')

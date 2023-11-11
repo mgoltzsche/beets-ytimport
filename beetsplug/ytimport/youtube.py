@@ -25,8 +25,6 @@ def likes(auth, max_tracks):
 class RenamePP(yt_dlp.postprocessor.PostProcessor):
     def run(self, info):
         oldname = info['filename']
-        if not os.path.exists(oldname):
-            return [], info
         dir = os.path.dirname(oldname)
         artist = info['artist']
         artist = safe_name(artist)
