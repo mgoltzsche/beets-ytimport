@@ -6,5 +6,6 @@ auth_headers: # file path
 set: ''
 min_length: 60 # 1m; min track length in seconds
 max_length: 7200 # 2h; max track length in seconds
+max_length_nochapter: 600 # 10m; max track length when split_tracks enabled and no chapters defined
 split_tracks: false
 group_albums: false

@@ -25,6 +25,8 @@ def likes(auth, max_tracks):
 class RenamePP(yt_dlp.postprocessor.PostProcessor):
     def run(self, info):
         oldname = info['filename']
+        if not os.path.exists(oldname):
+            return [], info
         dir = os.path.dirname(oldname)
         artist = info['artist']
         artist = safe_name(artist)
@@ -38,17 +40,27 @@ class RenamePP(yt_dlp.postprocessor.PostProcessor):
         return [], info
 
 class SplitChaptersToTracksPP(yt_dlp.postprocessor.PostProcessor):
+
+    def __init__(self, max_length_nochapter):
+        super(SplitChaptersToTracksPP, self).__init__()
+        self.max_length_nochapter = max_length_nochapter
+
     def run(self, info):
         fname = info['filename']
         self.to_screen('Splitting ' + fname)
         dir = os.path.join(os.path.dirname(fname), '..', 'albums')
         pathlib.Path(dir).mkdir(parents=True, exist_ok=True)
         dest_dir = os.path.join(dir, os.path.basename(os.path.splitext(fname)[0]))
-        if chapters2tracks(fname, dest_dir):
+        was_split, finfo = chapters2tracks(fname, dest_dir)
+        duration = int(float(finfo['format']['duration']))
+        if was_split:
+            os.remove(fname)
+        elif duration > self.max_length_nochapter:
+            self.to_screen("Deleting '{}' since it is too long and has no chapters".format(fname))
             os.remove(fname)
         return [], info
 
-def download(urls, target_dir, min_len=60, max_len=7200, auth_headers={}, split=False):
+def download(urls, target_dir, min_len=60, max_len=7200, max_length_nochapter=600, split=False, auth_headers={}):
 
     def download_filter(info, *, incomplete):
         duration = info.get('duration')
@@ -116,7 +128,7 @@ def download(urls, target_dir, min_len=60, max_len=7200, auth_headers={}, split=
     ydl = yt_dlp.YoutubeDL(ytdl_opts)
     if split:
         ydl.add_post_processor(RenamePP(), when='post_process')
-        ydl.add_post_processor(SplitChaptersToTracksPP(), when='post_process')
+        ydl.add_post_processor(SplitChaptersToTracksPP(max_length_nochapter), when='post_process')
     ydl.download(urls)
 
 #yt-dlp --batch-file=/data/youtube-likes.urls --download-archive=youtube/.youtube-download.log \

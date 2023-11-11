@@ -89,3 +89,9 @@ assertTag() {
 	assertTag "$FILE" track '9/14'
 	assertTag "$FILE" date 1980
 }
+
+@test 'ignore long track without chapters' {
+	# 'Panda Dub - Black Bamboo - Full Album'
+	beet ytimport --no-import --max-length-nochapter 600 https://www.youtube.com/watch?v=dJCdqz6EuSM
+	! ls -laR "$YTDIR" | grep -iq 'Bamboo'
+}

@@ -48,7 +48,7 @@ class YtImportPlugin(BeetsPlugin):
                 # Maybe a cookiefile with some picked cookies from the headers can be generated?
                 #if opts.auth and headers:
                 #    h = dict([l.split(': ', 1) for l in headers.strip().split('\n')[1:]])
-                youtube.download(urls, ytdir, min_len=opts.min_length, max_len=opts.max_length, auth_headers=h, split=opts.split_tracks)
+                youtube.download(urls, ytdir, min_len=opts.min_length, max_len=opts.max_length, max_length_nochapter=opts.max_length_nochapter, split=opts.split_tracks, auth_headers=h)
             else:
                 print('Nothing to download')
             if opts.do_import:
@@ -111,6 +111,9 @@ class YtImportPlugin(BeetsPlugin):
         p.add_option('--max-length', type='int', metavar='SECONDS',
             default=self.config['max_length'].get(),
             dest='max_length', help='maximum track length in seconds')
+        p.add_option('--max-length-nochapter', type='int', metavar='SECONDS',
+            default=self.config['max_length_nochapter'].get(),
+            dest='max_length_nochapter', help='maximum track length in seconds when --split-tracks enabled and no chapters defined')
         p.add_option('-q', '--quiet', action='store_true',
             default=False,
             dest='quiet', help="don't prompt for input when importing")
