@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 
-YTDIR=/data/youtube
+YTDIR=/data/ytimport
 
 assertDirExists() {
 	if [ ! -d "$1" ]; then

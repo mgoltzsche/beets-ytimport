@@ -1,4 +1,4 @@
-#directory: /path/to/your/youtube/cache
+#directory: /path/to/your/download/cache
 import: true
 likes: false
 max_likes: 15

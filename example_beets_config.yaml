@@ -11,7 +11,7 @@ plugins:
 - web
 
 ytimport:
-  directory: /data/youtube
+  directory: /data/ytimport
   import: true
   likes: false
   max_likes: 3
