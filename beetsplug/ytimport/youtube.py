@@ -95,9 +95,10 @@ def download(urls, target_dir, min_len=60, max_len=7200, max_len_nochapter=600, 
                     '%(original_url)s %(title)s:%(meta_comment)s',
                     # Use uploader name without suffix as artist tag.
                     uploader_as_artist_rule,
-                    r'artist:^(?P<album_artist>.+?)$',
                     # Extract track number and artist from title tag.
                     title_extraction_rule,
+                    # Use artist as album_artist
+                    r'artist:^(?P<album_artist>.+?)$',
                     # Add additional Youtube fields to the file's metadata.
                     '%(like_count)s:%(meta_likes)s',
                     '%(dislike_count)s:%(meta_dislikes)s',

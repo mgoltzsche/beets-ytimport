@@ -10,6 +10,12 @@ plugins:
 - random
 - web
 
+import:
+  write: true
+  copy: true
+  incremental: true
+  quiet: false
+
 ytimport:
   directory: /data/ytimport
   import: true

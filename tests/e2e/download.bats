@@ -22,13 +22,14 @@ assertTag() {
 	ffprobe -v quiet -show_format -print_format json "$1" | jq -e --arg k "$2" --arg v "$3" --arg f "$1" 'if .format.tags[$k]==$v then true else error("file "+$f+"\nUnexpected "+$k+" tag value:\n  "+(.format.tags[$k])+"\nexpects:\n  "+$v) end' >/dev/null
 }
 
-@test 'download track' {
+@test 'download track from youtube' {
 	# 'Cabal' from 'Marcus Intalex (Thema)'
 	beet ytimport --no-import https://www.youtube.com/watch?v=7VwubS2kBYU
 	FILE="$YTDIR/singles/Marcus Intalex - Cabal [7VwubS2kBYU].m4a"
 	assertTag "$FILE" title 'Cabal'
 	assertTag "$FILE" artist 'Marcus Intalex'
 	assertTag "$FILE" album 'Cabal'
+	assertTag "$FILE" album_artist 'Marcus Intalex'
 	assertTag "$FILE" comment 'https://www.youtube.com/watch?v=7VwubS2kBYU Cabal'
 }
 
@@ -45,6 +46,7 @@ assertTag() {
 	assertTag "$FILE" title 'Exchange'
 	assertTag "$FILE" artist 'Colyn'
 	assertTag "$FILE" album 'Resolve'
+	assertTag "$FILE" album_artist 'Colyn'
 }
 
 @test 'download track and derive artist from title' {
@@ -53,6 +55,7 @@ assertTag() {
 	FILE="$YTDIR/singles/Lemon D - Deep Space [_3pzM2GoSvU].m4a"
 	assertTag "$FILE" title 'Deep Space'
 	assertTag "$FILE" artist 'Lemon D'
+	assertTag "$FILE" album_artist 'Lemon D'
 }
 
 @test 'download track and use title as is' {
@@ -61,6 +64,7 @@ assertTag() {
 	FILE="$YTDIR"'/singles/STAND HIGH PATROL - STEPART & PUPAJIM - _Non Stop_ (Playground LP Stand High Records) [9HtLHY7cREA].m4a'
 	assertTag "$FILE" title 'STEPART & PUPAJIM : "Non Stop" (Playground LP - Stand High Records)'
 	assertTag "$FILE" artist 'STAND HIGH PATROL'
+	assertTag "$FILE" album_artist 'STAND HIGH PATROL'
 }
 
 @test 'download and split compilation' {
