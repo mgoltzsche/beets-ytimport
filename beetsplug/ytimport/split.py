@@ -56,7 +56,8 @@ def fix_track_numbers(chapters):
         track = i + 1
         tags = c['tags']
         tags['track'] = ('{:0'+padding+'d}/{:d}').format(track, len(chapters))
-        tags['title'] = re.sub('^0*'+str(track)+r'(\.| ) *(-+ +)?', '', tags['title'])
+        tags['title'] = re.sub('^0*'+str(track)+r'(\.+| ) *(-+ +)?', '', tags['title'])
+        # TODO: strip quotation marks
         if trackNumRegex.match(tags['title']):
             matched += 1
     if matched >= 2:
