@@ -25,11 +25,12 @@ def likes(auth, max_tracks):
 class RenamePP(yt_dlp.postprocessor.PostProcessor):
     def run(self, info):
         oldname = info['filename']
+        oldname = '{}.{}'.format(os.path.splitext(oldname)[0], info['ext'])
         dir = os.path.dirname(oldname)
         artist = info['artist']
         artist = safe_name(artist)
         title = safe_name(info['title'])
-        newname = '{} - {} [{}].m4a'.format(artist, title, info['id'])
+        newname = '{} - {} [{}].{}'.format(artist, title, info['id'], info['ext'])
         newname = os.path.join(dir, newname)
         if newname != oldname:
             self.to_screen("Renaming '{}' to '{}'".format(oldname, newname))
