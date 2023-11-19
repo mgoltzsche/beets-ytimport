@@ -83,10 +83,9 @@ def download(urls, target_dir, min_len=60, max_len=7200, max_len_nochapter=600, 
         'force_generic_extractor': False,
         'postprocessors': [
             { # Corresponds to the -x CLI option.
-                # Using m4a avoids the need to convert the audio (which would decrease quality) in most cases - just extract it from webm.
                 'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'm4a',
                 'nopostoverwrites': True
+                # Don't specify preferredcodec to prevent transcoding lossy audio
             },
             { # Corresponds to the --parse-metadata CLI option.
                 'key': 'MetadataFromField',
