@@ -54,7 +54,7 @@ class SplitChaptersToTracksPP(yt_dlp.postprocessor.PostProcessor):
             os.remove(fname)
         return [], info
 
-def download(urls, target_dir, min_len=60, max_len=7200, max_len_nochapter=600, split=False, auth_headers={}):
+def download(urls, target_dir, min_len=60, max_len=7200, max_len_nochapter=600, split=False, reimport=False, auth_headers={}):
 
     def download_filter(info):
         duration = info.get('duration')
@@ -69,7 +69,6 @@ def download(urls, target_dir, min_len=60, max_len=7200, max_len_nochapter=600, 
     ytdl_opts = {
         'outtmpl': target_dir+'/singles/%(artist|)s%(artist& - |)s%(title)s [%(id)s].%(ext)s',
         'format': 'm4a/bestaudio/best', # Prefer m4a to avoid conversion within pp.
-        'download_archive': target_dir+'/youtube-downloads.txt',
         'continuedl': True,
         'restrictfilenames': True,
         'windowsfilenames': True,
@@ -119,6 +118,8 @@ def download(urls, target_dir, min_len=60, max_len=7200, max_len_nochapter=600, 
         ],
         # TODO: maybe enable for premium quality: 'cookiefile': 'path/to/cookies.txt',
     }
+    if not reimport:
+        ytdl_opts['download_archive'] = target_dir+'/youtube-downloads.txt'
     if len(auth_headers) > 0:
         ytdl_opts['http_headers'] = auth_headers
     pathlib.Path(target_dir).mkdir(parents=True, exist_ok=True)

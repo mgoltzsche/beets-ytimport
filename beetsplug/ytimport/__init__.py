@@ -39,7 +39,8 @@ class YtImportPlugin(BeetsPlugin):
                     likedIds = likedIds[:opts.max_likes]
                 print('Found {:n} liked songs'.format(len(likedIds)))
                 urls += ['https://www.youtube.com/watch?v='+id for id in likedIds]
-            urls = [u for u in urls if not lib.items('comments:'+u)] # only new
+            if not opts.reimport:
+                urls = [u for u in urls if not lib.items('comments:'+u)]
             if urls:
                 print('Downloading {:n} song(s) to {:s}'.format(len(urls), ytdir))
                 h = {}
@@ -48,12 +49,16 @@ class YtImportPlugin(BeetsPlugin):
                 # Maybe a cookiefile with some picked cookies from the headers can be generated?
                 #if opts.auth and headers:
                 #    h = dict([l.split(': ', 1) for l in headers.strip().split('\n')[1:]])
-                youtube.download(urls, ytdir, min_len=opts.min_length, max_len=opts.max_length, max_len_nochapter=opts.max_length_nochapter, split=opts.split_tracks, auth_headers=h)
+                youtube.download(urls, ytdir, min_len=opts.min_length, max_len=opts.max_length, max_len_nochapter=opts.max_length_nochapter, split=opts.split_tracks, reimport=opts.reimport, auth_headers=h)
             else:
                 print('Nothing to download')
             if opts.do_import:
                 print('Importing downloaded songs into beets library')
-                cmd = ['beet', 'import', '-i', '--set', 'datasource=youtube']
+                cmd = ['beet', 'import', '-m', '--set', 'datasource=youtube']
+                if opts.reimport:
+                    cmd += ['-I']
+                else:
+                    cmd += ['-i']
                 if opts.set:
                     cmd += ['--set', opts.set]
                 if opts.quiet:
@@ -102,6 +107,12 @@ class YtImportPlugin(BeetsPlugin):
         p.add_option('--no-import', action='store_false',
             default=self.config['import'].get(),
             dest='do_import', help="don't import downloaded songs into beets")
+        p.add_option('--reimport', action='store_true',
+            default=self.config['reimport'].get(),
+            dest='reimport', help="re-download and re-import tracks")
+        p.add_option('--no-reimport', action='store_false',
+            default=self.config['reimport'].get(),
+            dest='reimport', help="don't re-download and re-import tracks")
         p.add_option('--set', type='string', metavar='KEY=VALUE',
             default=self.config['set'].get(),
             dest='set', help='set a field on import, using KEY=VALUE format')

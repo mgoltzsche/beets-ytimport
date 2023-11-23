@@ -10,6 +10,7 @@ plugins:
 - describe
 - smartplaylist
 - random
+- duplicates
 - web
 
 import:
@@ -30,7 +31,7 @@ ytimport:
   min_length: 60
   max_length: 7200
   split_tracks: true
-  group_albums: false
+  group_albums: true
 
 smartplaylist:
   relative_to: /data/playlists

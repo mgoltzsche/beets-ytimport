@@ -115,3 +115,11 @@ assertTag() {
 	assertTag "$FILE" artist 'Chris.SU'
 	assertTag "$FILE" album_artist 'Chris.SU'
 }
+
+@test 'reimport track' {
+	# 'Cabal' from 'Marcus Intalex (Thema)'
+	beet modify -y title:Cabal title=Changed
+	! beet ls title:Cabal
+	beet ytimport --reimport https://www.youtube.com/watch?v=7VwubS2kBYU
+	beet ls title:Cabal
+}
