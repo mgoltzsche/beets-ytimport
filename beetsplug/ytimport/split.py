@@ -11,7 +11,7 @@ trackNumRegex = re.compile(r'^[A-Z][0-9](\.+| ) *(-+ +)?')
 artistTitleRegex = re.compile(r'(?P<artist>.+?) +(-+|–|:|\|) +(?P<title>.+)')
 albumTrailRegex = re.compile(r'(\(|\[)?Full Album([^\w]|$)', re.IGNORECASE)
 yearRegex = re.compile(r'[^\w]((19|20)[0-9]{2})([^\w]|$)')
-quotedRegex = re.compile(r'^“(.+)(“|”)$')
+quotedRegex = re.compile(r'^(“|")([^“”"]+)(“|”|")$')
 
 def chapters2tracks(file, dest_dir):
     info = get_info(file)
@@ -56,14 +56,16 @@ def fix_track_numbers(chapters):
         c = chapters[i]
         track = i + 1
         tags = c['tags']
+        # Set track number based on chapter index
         tags['track'] = ('{:0'+padding+'d}/{:d}').format(track, len(chapters))
+        # Strip track number from title
         tags['title'] = re.sub('^0*'+str(track)+r'(\.+| ) *(-+ +)?', '', tags['title'])
-        tags['title'] = quotedRegex.sub(r'\1', tags['title'])
-        # TODO: strip quotation marks
+        # Strip quotation marks
+        tags['title'] = quotedRegex.sub(r'\2', tags['title'])
         if trackNumRegex.match(tags['title']):
             matched += 1
     if matched >= 2:
-        for c in chapters: # strip e.g. 'A1.'
+        for c in chapters: # strip e.g. 'A1.' from title
             tags = c['tags']
             tags['title'] = trackNumRegex.sub('', tags['title'])
 
