@@ -37,6 +37,7 @@ assertTag() {
 	# 'Cabal' from 'Marcus Intalex (Thema)'
 	beet ytimport -q https://www.youtube.com/watch?v=7VwubS2kBYU
 	[ "$(beet ls Cabal)" = 'Marcus Intalex - Cabal - Cabal' ]
+	beet info Cabal | grep -q ' genre: Drum And Bass'
 }
 
 @test 'download track and clean artist' {

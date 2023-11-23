@@ -3,7 +3,9 @@ library: /data/musiclibrary.db
 
 plugins:
 - ytimport
+- chroma
 - lastgenre
+- edit
 - info
 - describe
 - smartplaylist
@@ -15,6 +17,9 @@ import:
   copy: true
   incremental: true
   quiet: false
+
+chroma:
+  auto: true
 
 ytimport:
   directory: /data/ytimport
@@ -34,8 +39,8 @@ smartplaylist:
   playlists:
   - name: all.m3u
     query: ''
-  - name: all-by-album-genre.m3u
-    query: 'albumartist+ year+ album+ track+ genre+ artist+ title+'
+  - name: all-by-genre-album.m3u
+    query: 'genre+ albumartist+ year+ album+ track+ artist+ title+'
 
 lastgenre:
   auto: true
