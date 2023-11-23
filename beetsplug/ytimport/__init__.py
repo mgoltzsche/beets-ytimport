@@ -2,6 +2,7 @@ import os
 import pathlib
 import subprocess
 from beets.plugins import BeetsPlugin
+from beets.dbcore import types
 from beets.ui import Subcommand
 from optparse import OptionParser
 from confuse import ConfigSource, load_yaml
@@ -9,6 +10,12 @@ import beetsplug.ytimport.youtube
 import beetsplug.ytimport.split
 
 class YtImportPlugin(BeetsPlugin):
+    item_types = {'like': types.BOOLEAN}
+
+    @property
+    def album_types(self):
+        return {'like': types.BOOLEAN}
+
     def __init__(self):
         super(YtImportPlugin, self).__init__()
         config_file_path = os.path.join(os.path.dirname(__file__), 'config_default.yaml')
@@ -19,7 +26,7 @@ class YtImportPlugin(BeetsPlugin):
 
         def run_import_cmd(lib, opts, args):
             ytdir = opts.directory
-            urls = args
+            urls = [] + args
             headers = opts.auth_headers
             if headers:
                 f = open(headers, 'r')
@@ -54,11 +61,13 @@ class YtImportPlugin(BeetsPlugin):
                 print('Nothing to download')
             if opts.do_import:
                 print('Importing downloaded songs into beets library')
-                cmd = ['beet', 'import', '-m', '--set', 'datasource=youtube']
+                cmd = ['beet', 'import', '-m']
                 if opts.reimport:
                     cmd += ['-I']
                 else:
                     cmd += ['-i']
+                if opts.likes and len(args) == 0:
+                    cmd += ['--set', 'like=1']
                 if opts.set:
                     cmd += ['--set', opts.set]
                 if opts.quiet:
