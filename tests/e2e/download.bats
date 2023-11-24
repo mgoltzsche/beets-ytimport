@@ -123,3 +123,11 @@ assertTag() {
 	beet ytimport --reimport https://www.youtube.com/watch?v=7VwubS2kBYU
 	beet ls title:Cabal
 }
+
+@test 'truncate long file name' {
+	# 'Le Monstre du Lockdown (feat. Vitess, Oden & Fatzo, Jeff The Fool, Marwan Sabb)' from 'Herr Krank, Deborah Aime La Bagarre, Vitess, Oden & Fatzo, Jeff The F...'
+	beet ytimport --no-import https://www.youtube.com/watch?v=WxX7Pl2Y988
+	FILE="$YTDIR/singles/Herr Krank Deborah Aime La Bagarre Vitess Oden & Fatzo Jeff The F - Le Monstre du Lockdown (feat Vitess Oden & Fatzo Jeff The Fool Marwan Sabb) [WxX7Pl2Y988].opus"
+	assertTag "$FILE" title 'Le Monstre du Lockdown (feat. Vitess, Oden & Fatzo, Jeff The Fool, Marwan Sabb)'
+	assertTag "$FILE" artist 'Herr Krank, Deborah Aime La Bagarre, Vitess, Oden & Fatzo, Jeff The F...'
+}

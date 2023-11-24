@@ -71,6 +71,7 @@ def download(urls, target_dir, format='bestaudio/best', min_len=60, max_len=7200
         'continuedl': True,
         'restrictfilenames': True,
         'windowsfilenames': True,
+        'trim_file_name': 120,
         'writethumbnail': True,
         'keepvideo': False,
         'ignoreerrors': True,
