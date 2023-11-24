@@ -1,6 +1,7 @@
 import os
 import pathlib
 import subprocess
+import mediafile
 from beets.plugins import BeetsPlugin
 from beets.dbcore import types
 from beets.ui import Subcommand
@@ -10,17 +11,35 @@ import beetsplug.ytimport.youtube
 import beetsplug.ytimport.split
 
 class YtImportPlugin(BeetsPlugin):
-    item_types = {'like': types.BOOLEAN}
+    item_types = {
+        'like': types.BOOLEAN,
+        'yt_likes': types.INTEGER,
+        'yt_dislikes': types.INTEGER,
+        'yt_views': types.INTEGER,
+        'yt_rating': types.INTEGER,
+    }
 
     @property
     def album_types(self):
-        return {'like': types.BOOLEAN}
+        return {
+            'like': types.BOOLEAN,
+            'yt_likes': types.INTEGER,
+            'yt_dislikes': types.INTEGER,
+            'yt_views': types.INTEGER,
+            'yt_rating': types.INTEGER,
+        }
 
     def __init__(self):
         super(YtImportPlugin, self).__init__()
         config_file_path = os.path.join(os.path.dirname(__file__), 'config_default.yaml')
         source = ConfigSource(load_yaml(config_file_path) or {}, config_file_path)
         self.config.add(source)
+        # Import additional fields from audio file into DB
+        for f in ['yt_likes', 'yt_dislikes', 'yt_views', 'yt_rating']:
+            self.add_media_field(f, mediafile.MediaField(
+                mediafile.MP3DescStorageStyle(f),
+                mediafile.StorageStyle(f)
+            ))
 
     def commands(self):
 
@@ -56,17 +75,17 @@ class YtImportPlugin(BeetsPlugin):
                 # Maybe a cookiefile with some picked cookies from the headers can be generated?
                 #if opts.auth and headers:
                 #    h = dict([l.split(': ', 1) for l in headers.strip().split('\n')[1:]])
-                youtube.download(urls, ytdir, min_len=opts.min_length, max_len=opts.max_length, max_len_nochapter=opts.max_length_nochapter, split=opts.split_tracks, reimport=opts.reimport, auth_headers=h)
+                youtube.download(urls, ytdir, format=opts.format, min_len=opts.min_length, max_len=opts.max_length, max_len_nochapter=opts.max_length_nochapter, split=opts.split_tracks, reimport=opts.reimport, auth_headers=h)
             else:
                 print('Nothing to download')
             if opts.do_import:
                 print('Importing downloaded songs into beets library')
-                cmd = ['beet', 'import', '-m']
+                cmd = ['beet', 'import', '-pm']
                 if opts.reimport:
                     cmd += ['-I']
                 else:
                     cmd += ['-i']
-                if opts.likes and len(args) == 0:
+                if opts.likes:
                     cmd += ['--set', 'like=1']
                 if opts.set:
                     cmd += ['--set', opts.set]
@@ -86,6 +105,9 @@ class YtImportPlugin(BeetsPlugin):
         p.add_option('--directory', type='string', metavar='DIR',
             default=self.config['directory'].get(),
             dest='directory', help='directory to download Youtube files to')
+        p.add_option('--format', type='string', metavar='FORMAT',
+            default=self.config['format'].get(),
+            dest='format', help='preferred file format')
         p.add_option('--auth-headers', type='string', metavar='FILE',
             default=self.config['auth_headers'].get(),
             dest='auth_headers', help="path to a file containing the HTTP headers of an authenticated POST request to music.youtube.com, copied from your browser's development tool")

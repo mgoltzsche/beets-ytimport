@@ -15,15 +15,16 @@ quotedRegex = re.compile(r'^(“|")([^“”"]+)(“|”|")$')
 
 def chapters2tracks(file, dest_dir):
     info = get_info(file)
+    tags = get_tags(info)
     chapters = info['chapters']
     if len(chapters) < 2:
         return False
 
     print('Extracting tracks from '+file)
-    extend_chapter_tags(info)
+    extend_chapter_tags(chapters, tags)
     append_title_to_comment(chapters)
     fix_track_numbers(chapters)
-    fix_album_artists(chapters, info['format'])
+    fix_album_artists(chapters, tags)
 
     pathlib.Path(dest_dir).mkdir(parents=True, exist_ok=True)
 
@@ -32,14 +33,19 @@ def chapters2tracks(file, dest_dir):
     return True
 
 def get_info(file):
-    cmd = ['ffprobe', '-show_chapters', '-show_format', '-print_format', 'json', '-i', file, '-v', 'quiet']
+    cmd = ['ffprobe', '-show_chapters', '-show_format', '-show_streams', '-print_format', 'json', '-i', file, '-v', 'quiet']
     proc = subprocess.Popen(cmd,stdout=subprocess.PIPE)
     out = proc.stdout.read()
     return json.loads(out)
 
-def extend_chapter_tags(info):
-    tags = info['format']['tags']
-    chapters = info['chapters']
+def get_tags(info):
+    fmt = info['format']
+    if 'tags' in fmt: # e.g. m4a
+        return fmt['tags']
+    else: # e.g. opus
+        return info['streams'][0]['tags']
+
+def extend_chapter_tags(chapters, tags):
     for c in chapters:
         c['tags'] = tags | c['tags']
 
@@ -69,12 +75,11 @@ def fix_track_numbers(chapters):
             tags = c['tags']
             tags['title'] = trackNumRegex.sub('', tags['title'])
 
-def fix_album_artists(chapters, format):
+def fix_album_artists(chapters, album_tags):
     '''Extract artist from title.'''
-    formatTags = format['tags']
     year = ''
-    album = formatTags['title']
-    m = albumTrailRegex.search(formatTags['title'])
+    album = album_tags['title']
+    m = albumTrailRegex.search(album_tags['title'])
     if m:
         info = album[m.start():]
         album = album[:m.start()].strip(' -')
@@ -86,21 +91,23 @@ def fix_album_artists(chapters, format):
         m = artistTitleRegex.match(tags['title'])
         if m:
             tags |= m.groupdict()
-        tags['album_artist'] = formatTags['artist']
+        tags['album_artist'] = album_tags['artist']
         tags['album'] = album
         if year:
             tags['year'] = year
             tags['date'] = year
+            tags['origyear'] = year
 
 def chapter2track(file, chapter, chapterCount, dest_dir):
     tags = chapter['tags']
     track = re.sub('/[0-9]+$', '', tags['track'])
     title = safe_name(tags['title'])
+    ext = os.path.splitext(file)[1]
     if tags['artist'] == tags['album_artist']:
-        dest = '{:s}/{:s} - {:s}.m4a'.format(dest_dir, track, title)
+        dest = '{:s}/{:s} - {:s}{:s}'.format(dest_dir, track, title, ext)
     else:
         artist = safe_name(tags['artist'])
-        dest = '{:s}/{:s} - {:s} - {:s}.m4a'.format(dest_dir, track, artist, title)
+        dest = '{:s}/{:s} - {:s} - {:s}{:s}'.format(dest_dir, track, artist, title, ext)
     tmp_dest = dest+'.part'
     if os.path.isfile(dest):
         return
@@ -117,10 +124,11 @@ def chapter2track(file, chapter, chapterCount, dest_dir):
     if end != 0:
         end /= 1000
     print('  Extracting track {:s}: {:s}'.format(tags['track'], tags['title']))
+    format_opt = ext == '.opus' and [] or ['-f', 'mp4']
     subprocess.run(['ffmpeg', '-y', '-hide_banner', '-loglevel', 'error', \
         '-ss', str(start), '-to', str(end), \
         '-i', file, '-t', str(end-start), \
-        '-map', '0:a', '-map', '0:v', '-c', 'copy', '-f', 'mp4'] + \
+        '-map', '0:a', '-map', '0:v', '-c', 'copy'] + format_opt + \
         reduce(lambda r,k: r+['-metadata', '{:s}={:s}'.format(k, tags[k])], tags.keys(), []) + \
         [tmp_dest])
     os.rename(tmp_dest, dest)

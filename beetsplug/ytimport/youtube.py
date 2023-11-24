@@ -24,8 +24,7 @@ def likes(auth, max_tracks):
 
 class RenamePP(yt_dlp.postprocessor.PostProcessor):
     def run(self, info):
-        oldname = info['filename']
-        oldname = '{}.{}'.format(os.path.splitext(oldname)[0], info['ext'])
+        oldname = info['filepath']
         dir = os.path.dirname(oldname)
         artist = info['artist']
         artist = safe_name(artist)
@@ -54,7 +53,7 @@ class SplitChaptersToTracksPP(yt_dlp.postprocessor.PostProcessor):
             os.remove(fname)
         return [], info
 
-def download(urls, target_dir, min_len=60, max_len=7200, max_len_nochapter=600, split=False, reimport=False, auth_headers={}):
+def download(urls, target_dir, format='bestaudio/best', min_len=60, max_len=7200, max_len_nochapter=600, split=False, reimport=False, auth_headers={}):
 
     def download_filter(info):
         duration = info.get('duration')
@@ -68,7 +67,7 @@ def download(urls, target_dir, min_len=60, max_len=7200, max_len_nochapter=600, 
 
     ytdl_opts = {
         'outtmpl': target_dir+'/singles/%(artist|)s%(artist& - |)s%(title)s [%(id)s].%(ext)s',
-        'format': 'm4a/bestaudio/best', # Prefer m4a to avoid conversion within pp.
+        'format': format,
         'continuedl': True,
         'restrictfilenames': True,
         'windowsfilenames': True,
@@ -99,10 +98,10 @@ def download(urls, target_dir, min_len=60, max_len=7200, max_len_nochapter=600, 
                     # Use artist as album_artist
                     r'artist:^(?P<album_artist>.+?)$',
                     # Add additional Youtube fields to the file's metadata.
-                    '%(like_count)s:%(meta_likes)s',
-                    '%(dislike_count)s:%(meta_dislikes)s',
-                    '%(view_count)s:%(meta_views)s',
-                    '%(average_rating)s:%(meta_rating)s',
+                    '%(like_count)s:%(meta_yt_likes)s',
+                    '%(dislike_count)s:%(meta_yt_dislikes)s',
+                    '%(view_count)s:%(meta_yt_views)s',
+                    '%(average_rating)s:%(meta_yt_rating)s',
                     '%(release_date>%Y-%m-%d,upload_date>%Y-%m-%d)s:%(meta_publish_date)s',
                 ],
             },

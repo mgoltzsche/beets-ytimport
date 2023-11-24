@@ -1,6 +1,10 @@
 #directory: /path/to/your/download/cache
 import: true
 reimport: false
+# Favour opus over m4a due to higher quality and support for custom tags.
+# (You can get opus or m4a from Youtube and mp3 from SoundCloud.)
+# If your player does not support opus, configure 'm4a/bestaudio/best' instead.
+format: bestaudio/best
 likes: false
 max_likes: 15
 auth_headers: # file path

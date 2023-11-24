@@ -23,6 +23,11 @@ plugins:
 ytimport:
   directory: /path/to/youtube/cache # required
   import: true
+  reimport: false
+  # Favour opus over m4a due to higher quality and support for custom tags.
+  # (You can get opus or m4a from Youtube and mp3 from SoundCloud.)
+  # If your player does not support opus, set 'm4a/bestaudio/best' instead.
+  format: bestaudio/best
   likes: false
   max_likes: 15
   set: 'mykey=myvalue'
@@ -30,8 +35,8 @@ ytimport:
   min_length: 60 # 1m; min track length in seconds
   max_length: 7200 # 2h; max track length in seconds
   max_length_nochapter: 600 # 10m; max track length when no chapters defined
-  split_tracks: false
-  group_albums: false
+  split_tracks: true
+  group_albums: true
 ```
 
 For more information, see [CLI](#cli).
@@ -60,6 +65,7 @@ Usage: beet ytimport [options]
 Options:
   -h, --help            show this help message and exit
   --directory=DIR       directory to download Youtube files to
+  --format=FORMAT       preferred file format
   --auth-headers=FILE   path to a file containing the HTTP headers of an
                         authenticated POST request to music.youtube.com,
                         copied from your browser's development tool
@@ -72,6 +78,8 @@ Options:
   --no-group-albums     don't import split tracks as albums
   --import              import downloaded songs into beets
   --no-import           don't import downloaded songs into beets
+  --reimport            re-download and re-import tracks
+  --no-reimport         don't re-download and re-import tracks
   --set=KEY=VALUE       set a field on import, using KEY=VALUE format
   --min-length=SECONDS  minimum track length in seconds
   --max-length=SECONDS  maximum track length in seconds
