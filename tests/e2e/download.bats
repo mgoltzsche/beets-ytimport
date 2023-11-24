@@ -125,9 +125,17 @@ assertTag() {
 }
 
 @test 'truncate long file name' {
-	# 'Le Monstre du Lockdown (feat. Vitess, Oden & Fatzo, Jeff The Fool, Marwan Sabb)' from 'Herr Krank, Deborah Aime La Bagarre, Vitess, Oden & Fatzo, Jeff The F...'
+	# 'Le Monstre du Lockdown (feat. Vitess, Oden & Fatzo, Jeff The Fool, Marwan Sabb)' by 'Herr Krank, Deborah Aime La Bagarre, Vitess, Oden & Fatzo, Jeff The F...'
 	beet ytimport --no-import https://www.youtube.com/watch?v=WxX7Pl2Y988
 	FILE="$YTDIR/singles/Herr Krank Deborah Aime La Bagarre Vitess Oden & Fatzo Jeff The F - Le Monstre du Lockdown (feat Vitess Oden & Fatzo Jeff The Fool Marwan Sabb) [WxX7Pl2Y988].opus"
 	assertTag "$FILE" title 'Le Monstre du Lockdown (feat. Vitess, Oden & Fatzo, Jeff The Fool, Marwan Sabb)'
 	assertTag "$FILE" artist 'Herr Krank, Deborah Aime La Bagarre, Vitess, Oden & Fatzo, Jeff The F...'
+}
+
+@test 'strip trailing dot from title' {
+	# 'Open Cage.' by 'Daso'
+	beet ytimport --no-import https://www.youtube.com/watch?v=3shC0WBqdrU
+	FILE="$YTDIR/singles/Daso - Open Cage [3shC0WBqdrU].opus"
+	assertTag "$FILE" title 'Open Cage'
+	assertTag "$FILE" artist 'Daso'
 }

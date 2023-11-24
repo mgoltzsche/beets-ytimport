@@ -96,6 +96,10 @@ def download(urls, target_dir, format='bestaudio/best', min_len=60, max_len=7200
                     uploader_as_artist_rule,
                     # Extract track number and artist from title tag.
                     title_extraction_rule,
+                    # Strip quotes from title
+                    r'title:^(“|")(?P<title>[^“”"]+)(“|”|")$',
+                    # Strip trailing dot from title
+                    r'title:^(?P<title>.+[^0-9])\.$',
                     # Use artist as album_artist
                     r'artist:^(?P<album_artist>.+?)$',
                     # Add additional Youtube fields to the file's metadata.
