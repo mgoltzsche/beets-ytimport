@@ -1,21 +1,21 @@
 # beets-ytimport
 
-A [Beets](https://github.com/beetbox/beets) plugin to download audio from [Youtube](https://www.youtube.com/) and import it into your library.
+A [beets](https://github.com/beetbox/beets) plugin to download audio from [Youtube](https://www.youtube.com/) and import it into your library.
 
 Differences compared to the [ydl plugin](https://github.com/vmassuchetto/beets-ydl):
-* Supports downloading liked songs into your Beets library (using [ytmusicapi](https://github.com/sigma67/ytmusicapi)).
+* Supports downloading liked songs into your beets library (using [ytmusicapi](https://github.com/sigma67/ytmusicapi)).
 * Stores m4a files instead of mp3 to avoid re-encoding lossy audio (which would decrease quality).
 * Uses [yt-dlp](https://github.com/yt-dlp/yt-dlp) instead of [ytdl](https://github.com/ytdl-org/youtube-dl) to download the audio files.
 
 ## Installation
 
 ```sh
-python3 -m pip install beets-ytimport ytmusicapi yt-dlp slugify
+python3 -m pip install beets-ytimport ytmusicapi yt-dlp
 ```
 
 ## Configuration
 
-Enable the plugin and add a `ytimport` section to your Beets `config.yaml` as follows:
+Enable the plugin and add a `ytimport` section to your beets `config.yaml` as follows:
 ```yaml
 plugins:
   - ytimport
@@ -30,7 +30,7 @@ ytimport:
   format: bestaudio/best
   likes: false
   max_likes: 15
-  set: 'mykey=myvalue'
+  set: ''
   auth_headers: /path/to/your/http/headers
   min_length: 60 # 1m; min track length in seconds
   max_length: 7200 # 2h; max track length in seconds
@@ -43,14 +43,14 @@ For more information, see [CLI](#cli).
 
 ## Usage
 
-Once you enabled the `ytimport` plugin within your Beets configuration, you can download your liked songs from Youtube and import them into your Beets library as follows:
+Once you enabled the `ytimport` plugin within your beets configuration, you can download your liked songs from Youtube and import them into your beets library as follows:
 ```sh
 beet ytimport --likes --max-likes 3
 ```
 
-Please note that the command prompts you for Google authentication, unless you specified the `auth_headers` option within your Beets configuration file pointing to a file containing HTTP headers (to get the HTTP headers, see [here](https://ytmusicapi.readthedocs.io/en/stable/setup/browser.html#copy-authentication-headers)).
+Please note that the command prompts you for Google authentication, unless you specified the `auth_headers` option within your beets configuration file pointing to a file containing HTTP headers (to get the HTTP headers, see [here](https://ytmusicapi.readthedocs.io/en/stable/setup/browser.html#copy-authentication-headers)).
 Import auto-tagger prompts can be disabled by specifying the `-q` option.
-You can interrupt and continue or repeat the command to synchronize likes from your Youtube account(s) into your Beets library incrementally.
+You can interrupt and continue or repeat the command to synchronize likes from your Youtube account(s) into your beets library incrementally.
 
 To download a particular track, run:
 ```sh
@@ -101,9 +101,10 @@ Run the e2e tests (containerized):
 make test-e2e
 ```
 
-To test your plugin changes manually, you can run a shell within a Beets docker container as follows:
+To test your plugin changes manually, you can run a shell within a beets docker container as follows:
 ```sh
 make beets-sh
 ```
 
-For testing purposes the Beets library is written to `./data`.
+A temporary beets library is written to `./data`.
+It can be removed by calling `make clean-data`.

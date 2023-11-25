@@ -63,7 +63,7 @@ assertTag() {
 @test 'download track and use title as is' {
 	# 'STEPART & PUPAJIM : "Non Stop" (Playground LP - Stand High Records)' from 'STAND HIGH PATROL'
 	beet ytimport --no-import https://www.youtube.com/watch?v=9HtLHY7cREA
-	FILE="$YTDIR"'/singles/STAND HIGH PATROL - STEPART & PUPAJIM - _Non Stop_ (Playground LP Stand High Records) [9HtLHY7cREA].opus'
+	FILE="$YTDIR"'/singles/STAND HIGH PATROL - STEPART & PUPAJIM - _Non Stop_ (Playground LP - Stand High Records) [9HtLHY7cREA].opus'
 	assertTag "$FILE" title 'STEPART & PUPAJIM : "Non Stop" (Playground LP - Stand High Records)'
 	assertTag "$FILE" artist 'STAND HIGH PATROL'
 	assertTag "$FILE" album_artist 'STAND HIGH PATROL'

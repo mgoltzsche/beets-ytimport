@@ -2,46 +2,8 @@ import unittest
 import re
 from beetsplug.ytimport.youtube import title_extraction_rule
 from beetsplug.ytimport.youtube import uploader_as_artist_rule
-from beetsplug.ytimport.safename import safe_name
 
 class TestRegex(unittest.TestCase):
-
-    def test_safe_name(self):
-        testcases = [
-            {
-                'name': 'drop accent marks',
-                'input': 'Tour De Manège',
-                'expected': 'Tour De Manege',
-            },
-            {
-                'name': 'drop slash',
-                'input': r'A /\ B',
-                'expected': 'A B',
-            },
-            {
-                'name': 'preserve ampersand',
-                'input': 'Amadou & Mariam',
-                'expected': 'Amadou & Mariam',
-            },
-            {
-                'name': 'turn colon into minus',
-                'input': 'Compilation Vol 4 : Album Name',
-                'expected': 'Compilation Vol 4 - Album Name',
-            },
-            {
-                'name': 'turn double quote into underscore',
-                'input': '"Non Stop"',
-                'expected': '_Non Stop_',
-            },
-            {
-                'name': 'turn single quote into underscore',
-                'input': "d'or",
-                'expected': 'd or',
-            },
-        ]
-        for c in testcases:
-            a = safe_name(c['input'])
-            self.assertEqual(a, c['expected'], "testcase '{}' input: {}".format(c['name'], c['input']))
 
     def test_clean_artist_rule(self):
         r = uploader_as_artist_rule

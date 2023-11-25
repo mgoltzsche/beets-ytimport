@@ -11,8 +11,6 @@ RUN set -eux; \
 	rm -rf /tmp/bats; \
 	apk del git
 
-RUN python -m pip install python-slugify==8.0.1
-
 # Install beets-ytimport from source
 COPY dist /plugin/dist
 RUN python -m pip install /plugin/dist/*
