@@ -31,13 +31,14 @@ assertTag() {
 	assertTag "$FILE" album 'Cabal'
 	assertTag "$FILE" album_artist 'Marcus Intalex'
 	assertTag "$FILE" comment 'https://www.youtube.com/watch?v=7VwubS2kBYU Cabal'
+	assertTag "$FILE" yt_source 'youtube.com'
 }
 
 @test 'import track' {
 	# 'Cabal' from 'Marcus Intalex (Thema)'
-	beet ytimport -q https://www.youtube.com/watch?v=7VwubS2kBYU
+	beet ytimport -q https://youtu.be/7VwubS2kBYU
 	[ "$(beet ls Cabal)" = 'Marcus Intalex - Cabal - Cabal' ]
-	beet info Cabal | grep -q ' genre: Drum And Bass'
+	[ "$(beet info Cabal -f '$genre | $yt_source')" = 'Drum And Bass | youtube.com' ]
 }
 
 @test 'download track and clean artist' {
@@ -114,6 +115,7 @@ assertTag() {
 	assertTag "$FILE" title 'Mercury [C4C Recordings]'
 	assertTag "$FILE" artist 'Chris.SU'
 	assertTag "$FILE" album_artist 'Chris.SU'
+	assertTag "$FILE" yt_source 'soundcloud.com'
 }
 
 @test 'reimport track' {

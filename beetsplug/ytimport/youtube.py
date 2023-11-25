@@ -91,18 +91,19 @@ def download(urls, target_dir, format='bestaudio/best', min_len=60, max_len=7200
                 'formats': [
                     # Add Youtube URL and original title to comment field.
                     # This is to preserve the information when importing it into beets where it could be useful for disambiguation later.
-                    '%(original_url)s %(title)s:%(meta_comment)s',
+                    '%(webpage_url)s %(title)s:%(meta_comment)s',
                     # Use uploader name without suffix as artist tag.
                     uploader_as_artist_rule,
                     # Extract track number and artist from title tag.
                     title_extraction_rule,
-                    # Strip quotes from title
-                    r'title:^(“|")(?P<title>[^“”"]+)(“|”|")$',
-                    # Strip trailing dot from title
-                    r'title:^(?P<title>.+[^0-9])\.$',
                     # Use artist as album_artist
                     r'artist:^(?P<album_artist>.+?)$',
+                    # Strip quotes from title
+                    r'title:^(“|")(?P<title>[^“”"]+)(“|”|")$|',
+                    # Strip trailing dot from title
+                    r'title:^(?P<title>.+[^0-9])\.$|',
                     # Add additional Youtube fields to the file's metadata.
+                    '%(webpage_url_domain)s:%(meta_yt_source)s',
                     '%(like_count)s:%(meta_yt_likes)s',
                     '%(dislike_count)s:%(meta_yt_dislikes)s',
                     '%(view_count)s:%(meta_yt_views)s',
