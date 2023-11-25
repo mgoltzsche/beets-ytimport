@@ -53,7 +53,7 @@ class SplitChaptersToTracksPP(yt_dlp.postprocessor.PostProcessor):
             os.remove(fname)
         return [], info
 
-def download(urls, target_dir, format='bestaudio/best', min_len=60, max_len=7200, max_len_nochapter=600, split=False, reimport=False, auth_headers={}):
+def download(urls, target_dir, format='bestaudio/best', min_len=60, max_len=7200, max_len_nochapter=900, split=False, reimport=False, auth_headers={}):
 
     def download_filter(info):
         duration = info.get('duration')
