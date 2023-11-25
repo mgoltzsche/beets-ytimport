@@ -124,7 +124,7 @@ def download(urls, target_dir, format='bestaudio/best', min_len=60, max_len=7200
         # TODO: maybe enable for premium quality: 'cookiefile': 'path/to/cookies.txt',
     }
     if not reimport:
-        ytdl_opts['download_archive'] = target_dir+'/youtube-downloads.txt'
+        ytdl_opts['download_archive'] = target_dir+'/ytdownloads.txt'
     if len(auth_headers) > 0:
         ytdl_opts['http_headers'] = auth_headers
     pathlib.Path(target_dir).mkdir(parents=True, exist_ok=True)
