@@ -2,6 +2,7 @@
 import: true
 reimport: false
 format: bestaudio/best # favour opus over m4a and mp3
+url_file: ''
 likes: false
 max_likes: 15
 auth_headers: # file path

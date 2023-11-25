@@ -28,6 +28,7 @@ ytimport:
   # (You can get opus or m4a from Youtube and mp3 from SoundCloud.)
   # To prefer m4a instead, set 'm4a/bestaudio/best'.
   format: bestaudio/best
+  url_file: ''
   likes: false
   max_likes: 15
   set: ''
@@ -69,6 +70,7 @@ Options:
   --auth-headers=FILE   path to a file containing the HTTP headers of an
                         authenticated POST request to music.youtube.com,
                         copied from your browser's development tool
+  --url-file=FILE       file containing a download URL per line
   --likes               download liked songs
   --no-likes            don't download liked songs
   --max-likes=LIKES     maximum number of likes to obtain

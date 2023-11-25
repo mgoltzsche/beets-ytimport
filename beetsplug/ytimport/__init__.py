@@ -47,17 +47,24 @@ class YtImportPlugin(BeetsPlugin):
 
         def run_import_cmd(lib, opts, args):
             ytdir = opts.directory
-            urls = [] + args
             headers = opts.auth_headers
             if headers:
                 f = open(headers, 'r')
                 headers = f.read()
+                f.close()
+            urls = [] + args
+            if opts.url_file:
+                f = open(opts.url_file, 'r')
+                urls += f.readlines()
                 f.close()
             singles_dir = os.path.join(ytdir, 'singles')
             albums_dir = os.path.join(ytdir, 'albums')
             pathlib.Path(singles_dir).mkdir(parents=True, exist_ok=True)
             pathlib.Path(albums_dir).mkdir(parents=False, exist_ok=True)
             if opts.likes:
+                if opts.url_file or len(args) > 0:
+                    raise Exception('Using --likes option in conjunction with --url-file or URL args is not supported!')
+                # TODO: mark like as tag within downloaded file already (to be able to distinguish likes also on local reimport)
                 print('Obtaining your liked songs from Youtube...')
                 if not headers:
                     print('Using interactive authentication. To enable non-interactive authentication, set --auth-headers')
@@ -113,6 +120,9 @@ class YtImportPlugin(BeetsPlugin):
         p.add_option('--auth-headers', type='string', metavar='FILE',
             default=self.config['auth_headers'].get(),
             dest='auth_headers', help="path to a file containing the HTTP headers of an authenticated POST request to music.youtube.com, copied from your browser's development tool")
+        p.add_option('--url-file', type='string', metavar='FILE',
+            default=self.config['url_file'].get(),
+            dest='url_file', help='file containing a download URL per line')
         p.add_option('--likes', action='store_true',
             default=self.config['likes'].get(),
             dest='likes', help='download liked songs')

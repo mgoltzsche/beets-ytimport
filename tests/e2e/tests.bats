@@ -1,6 +1,7 @@
 #!/usr/bin/env bats
 
 YTDIR=/data/ytimport
+ASSETDIR=tests/e2e
 
 assertDirExists() {
 	if [ ! -d "$1" ]; then
@@ -39,6 +40,14 @@ assertTag() {
 	beet ytimport -q https://youtu.be/7VwubS2kBYU
 	[ "$(beet ls Cabal)" = 'Marcus Intalex - Cabal - Cabal' ]
 	[ "$(beet info Cabal -f '$genre | $yt_source')" = 'Drum And Bass | youtube.com' ]
+}
+
+@test 'reimport track' {
+	# 'Cabal' from 'Marcus Intalex (Thema)'
+	beet modify -y title:Cabal title='Changed Title'
+	! beet ls title:Cabal
+	beet ytimport --reimport https://www.youtube.com/watch?v=7VwubS2kBYU
+	beet ls title:Cabal
 }
 
 @test 'download track and clean artist' {
@@ -118,12 +127,15 @@ assertTag() {
 	assertTag "$FILE" yt_source 'soundcloud.com'
 }
 
-@test 'reimport track' {
-	# 'Cabal' from 'Marcus Intalex (Thema)'
-	beet modify -y title:Cabal title=Changed
-	! beet ls title:Cabal
-	beet ytimport --reimport https://www.youtube.com/watch?v=7VwubS2kBYU
-	beet ls title:Cabal
+@test 'download tracks specified by --url-file' {
+	URLFILE="$ASSETDIR/example-urls.txt"
+	beet ytimport --no-import --url-file "$URLFILE"
+	FILE="$YTDIR/singles/Cabaret Nocturne - Blood Walk [XSudap5Pyrc].opus"
+	assertTag "$FILE" title 'Blood Walk'
+	assertTag "$FILE" artist 'Cabaret Nocturne'
+	FILE="$YTDIR/singles/Cabaret Nocturne - Blind Trust [ODwZzMLv7zU].opus"
+	assertTag "$FILE" title 'Blind Trust'
+	assertTag "$FILE" artist 'Cabaret Nocturne'
 }
 
 @test 'truncate long file name' {

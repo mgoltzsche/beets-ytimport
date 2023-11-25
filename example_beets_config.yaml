@@ -1,6 +1,11 @@
 directory: /data/music
 library: /data/musiclibrary.db
 
+paths:
+  default: Albums/%title{$albumartist}/$album%aunique{}/$track $title
+  singleton: Singles/%title{$artist}/$title
+  comp: Compilations/$album%aunique{}/$track $title
+
 plugins:
 - ytimport
 - chroma

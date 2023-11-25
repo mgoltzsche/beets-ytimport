@@ -26,12 +26,12 @@ test: beets-container
 test-e2e: beets-container
 	# Run e2e tests
 	mkdir -p data/beets
-	@docker run --rm -u `id -u`:`id -g` \
+	@docker run --rm -u `id -u`:`id -g` -w /plugin \
                 -v "`pwd`:/plugin" -w /plugin \
 		-v "`pwd`/data:/data" \
 		-v "`pwd`/example_beets_config.yaml:/data/beets/config.yaml" \
                 --entrypoint sh $(BEETS_IMG) -c \
-                'set -x; bats -T /plugin/tests/e2e'
+                'set -x; bats -T tests/e2e'
 
 .PHONY: beets-sh
 beets-sh: beets-container
