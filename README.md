@@ -24,9 +24,9 @@ ytimport:
   directory: /path/to/youtube/cache # required
   import: true
   reimport: false
-  # Favour opus over m4a due to higher quality and support for custom tags.
+  # Prefers opus over m4a due to higher quality and support for custom tags.
   # (You can get opus or m4a from Youtube and mp3 from SoundCloud.)
-  # If your player does not support opus, set 'm4a/bestaudio/best' instead.
+  # To prefer m4a instead, set 'm4a/bestaudio/best'.
   format: bestaudio/best
   likes: false
   max_likes: 15

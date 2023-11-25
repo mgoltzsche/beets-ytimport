@@ -1,9 +1,9 @@
 #directory: /path/to/your/download/cache
 import: true
 reimport: false
-# Favour opus over m4a due to higher quality and support for custom tags.
+# Prefers opus over m4a due to higher quality and support for custom tags.
 # (You can get opus or m4a from Youtube and mp3 from SoundCloud.)
-# If your player does not support opus, configure 'm4a/bestaudio/best' instead.
+# To prefer m4a instead, set 'm4a/bestaudio/best'.
 format: bestaudio/best
 likes: false
 max_likes: 15
@@ -12,5 +12,5 @@ set: ''
 min_length: 60 # 1m; min track length in seconds
 max_length: 7200 # 2h; max track length in seconds
 max_length_nochapter: 600 # 10m; max track length when no chapters defined
-split_tracks: false
-group_albums: false
+split_tracks: true
+group_albums: true
