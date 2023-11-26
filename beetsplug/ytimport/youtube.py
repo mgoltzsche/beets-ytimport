@@ -53,7 +53,7 @@ class SplitChaptersToTracksPP(yt_dlp.postprocessor.PostProcessor):
             os.remove(fname)
         return [], info
 
-def download(urls, target_dir, format='bestaudio/best', min_len=60, max_len=7200, max_len_nochapter=900, split=False, reimport=False, auth_headers={}):
+def download(urls, target_dir, format='bestaudio/best', min_len=60, max_len=7200, max_len_nochapter=900, split=False, like=False, reimport=False, auth_headers={}):
 
     def download_filter(info):
         duration = info.get('duration')
@@ -65,6 +65,32 @@ def download(urls, target_dir, format='bestaudio/best', min_len=60, max_len=7200
         if duration and duration > max_len_nochapter and (not chapters or len(chapters) < 2):
             return 'Track is too long and has no chapters'
 
+    transform_rules = [
+        # Add Youtube URL and original title to comment field.
+        # This is to preserve the information when importing it into beets where it could be useful for disambiguation later.
+        '%(webpage_url)s %(title)s:%(meta_comment)s',
+        # Use uploader name without suffix as artist tag.
+        uploader_as_artist_rule,
+        # Extract track number and artist from title tag.
+        title_extraction_rule,
+        # Use artist as album_artist
+        r'artist:^(?P<album_artist>.+?)$',
+        # Trim quotes from title
+        r'title:^(“|")(?P<title>[^“”"]+)(“|”|")$|',
+        # Trim trailing dot from title
+        r'title:^(?P<title>.+[^0-9])\.$|',
+        # Add additional Youtube fields to the file's metadata.
+        '%(id)s:%(meta_yt_id)s',
+        '%(webpage_url_domain)s:%(meta_yt_source)s',
+        r'webpage_url_domain:^(?P<meta_yt_source>[^\.]+?)\.[^\.]+$|',
+        '%(like_count)s:%(meta_yt_likes)s',
+        '%(dislike_count)s:%(meta_yt_dislikes)s',
+        '%(view_count)s:%(meta_yt_views)s',
+        '%(average_rating)s:%(meta_yt_rating)s',
+        '%(release_date>%Y-%m-%d,upload_date>%Y-%m-%d)s:%(meta_publish_date)s',
+    ]
+    if like:
+        transform_rules += ['1:%(meta_like)s']
     ytdl_opts = {
         'outtmpl': target_dir+'/singles/%(artist|)s%(artist& - |)s%(title)s [%(id)s].%(ext)s',
         'format': format,
@@ -88,30 +114,7 @@ def download(urls, target_dir, format='bestaudio/best', min_len=60, max_len=7200
             },
             { # Corresponds to the --parse-metadata CLI option.
                 'key': 'MetadataFromField',
-                'formats': [
-                    # Add Youtube URL and original title to comment field.
-                    # This is to preserve the information when importing it into beets where it could be useful for disambiguation later.
-                    '%(webpage_url)s %(title)s:%(meta_comment)s',
-                    # Use uploader name without suffix as artist tag.
-                    uploader_as_artist_rule,
-                    # Extract track number and artist from title tag.
-                    title_extraction_rule,
-                    # Use artist as album_artist
-                    r'artist:^(?P<album_artist>.+?)$',
-                    # Trim quotes from title
-                    r'title:^(“|")(?P<title>[^“”"]+)(“|”|")$|',
-                    # Trim trailing dot from title
-                    r'title:^(?P<title>.+[^0-9])\.$|',
-                    # Add additional Youtube fields to the file's metadata.
-                    '%(id)s:%(meta_yt_id)s',
-                    '%(webpage_url_domain)s:%(meta_yt_source)s',
-                    r'webpage_url_domain:^(?P<meta_yt_source>[^\.]+?)\.[^\.]+$|',
-                    '%(like_count)s:%(meta_yt_likes)s',
-                    '%(dislike_count)s:%(meta_yt_dislikes)s',
-                    '%(view_count)s:%(meta_yt_views)s',
-                    '%(average_rating)s:%(meta_yt_rating)s',
-                    '%(release_date>%Y-%m-%d,upload_date>%Y-%m-%d)s:%(meta_publish_date)s',
-                ],
+                'formats': transform_rules,
             },
             { # Corresponds to the --add-metadata CLI option.
                 'key': 'FFmpegMetadata',

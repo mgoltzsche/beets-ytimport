@@ -31,7 +31,7 @@ class YtImportPlugin(BeetsPlugin):
         source = ConfigSource(load_yaml(config_file_path) or {}, config_file_path)
         self.config.add(source)
         # Import additional fields from audio file into DB
-        for f in ['yt_id', 'yt_source', 'yt_likes', 'yt_dislikes', 'yt_views', 'yt_rating']:
+        for f in self.item_types.keys():
             self.add_media_field(f, mediafile.MediaField(
                 mediafile.MP3DescStorageStyle(f),
                 mediafile.StorageStyle(f)
@@ -78,7 +78,7 @@ class YtImportPlugin(BeetsPlugin):
                 # Maybe a cookiefile with some picked cookies from the headers can be generated?
                 #if opts.auth and headers:
                 #    h = dict([l.split(': ', 1) for l in headers.strip().split('\n')[1:]])
-                youtube.download(urls, ytdir, format=opts.format, min_len=opts.min_length, max_len=opts.max_length, max_len_nochapter=opts.max_length_nochapter, split=opts.split_tracks, reimport=opts.reimport, auth_headers=h)
+                youtube.download(urls, ytdir, format=opts.format, min_len=opts.min_length, max_len=opts.max_length, max_len_nochapter=opts.max_length_nochapter, split=opts.split_tracks, like=opts.likes, reimport=opts.reimport, auth_headers=h)
             else:
                 print('Nothing to download')
             if opts.do_import:
@@ -88,8 +88,6 @@ class YtImportPlugin(BeetsPlugin):
                     cmd += ['-I']
                 else:
                     cmd += ['-i']
-                if opts.likes:
-                    cmd += ['--set', 'like=1']
                 if opts.set:
                     cmd += ['--set', opts.set]
                 if opts.quiet:
