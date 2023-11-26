@@ -1,15 +1,13 @@
-FROM ghcr.io/mgoltzsche/beets:0.3.0
+FROM ghcr.io/mgoltzsche/beets:0.5.0
 
 # Install bats
 USER root:root
-RUN apk add --update --no-cache git bash
-ARG BATS_VERSION=v1.8.2
+ARG BATS_VERSION=1.10.0
 RUN set -eux; \
-	git clone -c 'advice.detachedHead=false' --depth=1 --branch=$BATS_VERSION https://github.com/bats-core/bats-core.git /tmp/bats; \
-	/tmp/bats/install.sh /opt/bats; \
+	wget -qO - https://github.com/bats-core/bats-core/archive/refs/tags/v${BATS_VERSION}.tar.gz | tar -C /tmp -xzf -; \
+	/tmp/bats-core-$BATS_VERSION/install.sh /opt/bats; \
 	ln -s /opt/bats/bin/bats /usr/local/bin/bats; \
-	rm -rf /tmp/bats; \
-	apk del git
+	rm -rf /tmp/bats-core-$BATS_VERSION
 
 # Install beets-ytimport from source
 COPY dist /plugin/dist
