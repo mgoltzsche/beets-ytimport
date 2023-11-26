@@ -32,14 +32,15 @@ assertTag() {
 	assertTag "$FILE" album 'Cabal'
 	assertTag "$FILE" album_artist 'Marcus Intalex'
 	assertTag "$FILE" comment 'https://www.youtube.com/watch?v=7VwubS2kBYU Cabal'
-	assertTag "$FILE" yt_source 'youtube.com'
+	assertTag "$FILE" yt_id 7VwubS2kBYU
+	assertTag "$FILE" yt_source youtube
 }
 
 @test 'import track' {
 	# 'Cabal' from 'Marcus Intalex (Thema)'
 	beet ytimport -q https://youtu.be/7VwubS2kBYU
 	[ "$(beet ls Cabal)" = 'Marcus Intalex - Cabal - Cabal' ]
-	[ "$(beet info Cabal -f '$genre | $yt_source')" = 'Drum And Bass | youtube.com' ]
+	[ "$(beet info Cabal -f '$genre | $yt_source/$yt_id')" = 'Drum And Bass | youtube/7VwubS2kBYU' ]
 }
 
 @test 'reimport track' {
@@ -122,9 +123,10 @@ assertTag() {
 	beet ytimport --no-import 'https://soundcloud.com/chrissuofficial/mercury?si=84a62ed3a35640a6913edd5ef19cfa9b&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing'
 	FILE="$YTDIR/singles/Chris SU - Mercury [C4C Recordings] [547755837].mp3"
 	assertTag "$FILE" title 'Mercury [C4C Recordings]'
-	assertTag "$FILE" artist 'Chris.SU'
-	assertTag "$FILE" album_artist 'Chris.SU'
-	assertTag "$FILE" yt_source 'soundcloud.com'
+	assertTag "$FILE" artist Chris.SU
+	assertTag "$FILE" album_artist Chris.SU
+	assertTag "$FILE" yt_id 547755837
+	assertTag "$FILE" yt_source soundcloud
 }
 
 @test 'download tracks specified by --url-file' {

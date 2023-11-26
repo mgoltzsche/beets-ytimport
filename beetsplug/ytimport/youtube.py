@@ -98,12 +98,14 @@ def download(urls, target_dir, format='bestaudio/best', min_len=60, max_len=7200
                     title_extraction_rule,
                     # Use artist as album_artist
                     r'artist:^(?P<album_artist>.+?)$',
-                    # Strip quotes from title
+                    # Trim quotes from title
                     r'title:^(“|")(?P<title>[^“”"]+)(“|”|")$|',
-                    # Strip trailing dot from title
+                    # Trim trailing dot from title
                     r'title:^(?P<title>.+[^0-9])\.$|',
                     # Add additional Youtube fields to the file's metadata.
+                    '%(id)s:%(meta_yt_id)s',
                     '%(webpage_url_domain)s:%(meta_yt_source)s',
+                    r'webpage_url_domain:^(?P<meta_yt_source>[^\.]+?)\.[^\.]+$|',
                     '%(like_count)s:%(meta_yt_likes)s',
                     '%(dislike_count)s:%(meta_yt_dislikes)s',
                     '%(view_count)s:%(meta_yt_views)s',

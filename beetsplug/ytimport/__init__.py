@@ -13,6 +13,7 @@ import beetsplug.ytimport.split
 class YtImportPlugin(BeetsPlugin):
     item_types = {
         'like': types.BOOLEAN,
+        'yt_id': types.STRING,
         'yt_source': types.STRING,
         'yt_likes': types.INTEGER,
         'yt_dislikes': types.INTEGER,
@@ -22,14 +23,7 @@ class YtImportPlugin(BeetsPlugin):
 
     @property
     def album_types(self):
-        return {
-            'like': types.BOOLEAN,
-            'yt_source': types.STRING,
-            'yt_likes': types.INTEGER,
-            'yt_dislikes': types.INTEGER,
-            'yt_views': types.INTEGER,
-            'yt_rating': types.INTEGER,
-        }
+        return self.item_types
 
     def __init__(self):
         super(YtImportPlugin, self).__init__()
@@ -37,7 +31,7 @@ class YtImportPlugin(BeetsPlugin):
         source = ConfigSource(load_yaml(config_file_path) or {}, config_file_path)
         self.config.add(source)
         # Import additional fields from audio file into DB
-        for f in ['yt_source', 'yt_likes', 'yt_dislikes', 'yt_views', 'yt_rating']:
+        for f in ['yt_id', 'yt_source', 'yt_likes', 'yt_dislikes', 'yt_views', 'yt_rating']:
             self.add_media_field(f, mediafile.MediaField(
                 mediafile.MP3DescStorageStyle(f),
                 mediafile.StorageStyle(f)
