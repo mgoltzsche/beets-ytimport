@@ -112,6 +112,36 @@ assertTag() {
 	assertTag "$FILE" date 1980
 }
 
+@test 'download album and trim track number from chapter title' {
+	# 'Black Focus' album with track '3) Remembrance'
+	beet ytimport --no-import https://www.youtube.com/watch?v=4D8YPDdsxYU
+	FILE="$YTDIR/albums/Yussef Kamaal - Black Focus (Full Album Upload) [4D8YPDdsxYU]/03 - Remembrance.opus"
+	assertTag "$FILE" title 'Remembrance'
+	assertTag "$FILE" artist 'Yussef Kamaal'
+	assertTag "$FILE" album 'Black Focus'
+	assertTag "$FILE" album_artist 'Yussef Kamaal'
+}
+
+@test 'download album and trim colon separated track number from chapter title' {
+	# 'Squarepusher - Conumber E:P' album with track '2: Eviscerate'
+	beet ytimport --no-import https://www.youtube.com/watch?v=zyFFPE0Kxzw
+	FILE="$YTDIR/albums/Squarepusher - Conumber E-P [zyFFPE0Kxzw]/2 - Eviscerate.opus"
+	assertTag "$FILE" title 'Eviscerate'
+	assertTag "$FILE" artist 'Squarepusher'
+	assertTag "$FILE" album 'Conumber E:P'
+	assertTag "$FILE" album_artist 'Squarepusher'
+}
+
+@test 'download album and trim time offset from chapter title' {
+	# 'RAGGA JUNGLE - Drum n Bass Mix (v.2)' with tracks '04:03 - 08:13 02. kursiva' and '1:00:48 - 1:04:43 15. sizzla - im living'
+	beet ytimport --no-import https://www.youtube.com/watch?v=F2Rx2lsD_vE
+	FILE="$YTDIR/albums/RAGGA JUNGLE - Drum n Bass Mix (v 2) [F2Rx2lsD_vE]/02 - kursiva feat blackout ja - early in the morning (true tactix remix).opus"
+	assertTag "$FILE" title 'early in the morning (true tactix remix)'
+	assertTag "$FILE" artist 'kursiva feat blackout ja'
+	assertTag "$FILE" album 'Drum n Bass Mix (v.2)'
+	assertTag "$FILE" album_artist 'RAGGA JUNGLE'
+}
+
 @test 'ignore long track without chapters' {
 	# 'Panda Dub - Black Bamboo - Full Album'
 	beet ytimport --no-import --max-length-nochapter 600 https://www.youtube.com/watch?v=dJCdqz6EuSM
@@ -148,7 +178,7 @@ assertTag() {
 	assertTag "$FILE" artist 'Herr Krank, Deborah Aime La Bagarre, Vitess, Oden & Fatzo, Jeff The F...'
 }
 
-@test 'strip trailing dot from title' {
+@test 'trim trailing dot from title' {
 	# 'Open Cage.' by 'Daso'
 	beet ytimport --no-import https://www.youtube.com/watch?v=3shC0WBqdrU
 	FILE="$YTDIR/singles/Daso - Open Cage [3shC0WBqdrU].opus"

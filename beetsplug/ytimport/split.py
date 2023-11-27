@@ -12,6 +12,7 @@ artistTitleRegex = re.compile(r'(?P<artist>.+?) +(-+|–|:|\|) +(?P<title>.+)')
 albumTrailRegex = re.compile(r'(\(|\[)?Full Album([^\w]|$)', re.IGNORECASE)
 yearRegex = re.compile(r'[^\w]((19|20)[0-9]{2})([^\w]|$)')
 quotedRegex = re.compile(r'^(“|")([^“”"]+)(“|”|")$')
+timeOffsetRegex = re.compile(r'^([0-9]{1,2}:)?[0-9]{2}:[0-9]{2} +')
 
 def chapters2tracks(file, dest_dir):
     info = get_info(file)
@@ -64,8 +65,10 @@ def fix_track_numbers(chapters):
         tags = c['tags']
         # Set track number based on chapter index
         tags['track'] = ('{:0'+padding+'d}/{:d}').format(track, len(chapters))
+        # Strip time offset from title
+        tags['title'] = timeOffsetRegex.sub('', tags['title'])
         # Strip track number from title
-        tags['title'] = re.sub('^0*'+str(track)+r'(\.+| ) *(-+ +)?', '', tags['title'])
+        tags['title'] = re.sub('^'+str(track)+r'((\)|:) *|-+ +)|^0*'+str(track)+r'(\.+| *-| ) *(-+ +)?', '', tags['title'])
         # Strip quotation marks
         tags['title'] = quotedRegex.sub(r'\2', tags['title'])
         if trackNumRegex.match(tags['title']):
