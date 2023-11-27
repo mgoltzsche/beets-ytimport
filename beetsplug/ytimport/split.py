@@ -29,8 +29,8 @@ def chapters2tracks(file, dest_dir):
 
     pathlib.Path(dest_dir).mkdir(parents=True, exist_ok=True)
 
-    for c in chapters:
-        chapter2track(file, c, len(chapters), dest_dir)
+    for i in range(0, len(chapters)):
+        chapter2track(file, chapters[i], i, len(chapters), dest_dir)
     return True
 
 def get_info(file):
@@ -64,7 +64,7 @@ def fix_track_numbers(chapters):
         track = i + 1
         tags = c['tags']
         # Set track number based on chapter index
-        tags['track'] = ('{:0'+padding+'d}/{:d}').format(track, len(chapters))
+        tags['track'] = '{:d}/{:d}'.format(track, len(chapters))
         # Strip time offset from title
         tags['title'] = timeOffsetRegex.sub('', tags['title'])
         # Strip track number from title
@@ -101,9 +101,10 @@ def fix_album_artists(chapters, album_tags):
             tags['date'] = year
             tags['origyear'] = year
 
-def chapter2track(file, chapter, chapterCount, dest_dir):
+def chapter2track(file, chapter, i, chapterCount, dest_dir):
     tags = chapter['tags']
-    track = re.sub('/[0-9]+$', '', tags['track'])
+    padding = str(len(str(chapterCount)))
+    track = ('{:0'+padding+'d}').format(i+1)
     title = safe_name(tags['title'])
     ext = os.path.splitext(file)[1]
     if tags['artist'] == tags['album_artist']:
@@ -130,7 +131,7 @@ def chapter2track(file, chapter, chapterCount, dest_dir):
     format_opt = ext == '.opus' and [] or ['-f', 'mp4']
     subprocess.run(['ffmpeg', '-y', '-hide_banner', '-loglevel', 'error', \
         '-ss', str(start), '-to', str(end), \
-        '-i', file, '-t', str(end-start), \
+        '-i', file, '-movflags', 'use_metadata_tags', '-t', str(end-start), \
         '-map', '0:a', '-map', '0:v', '-c', 'copy'] + format_opt + \
         reduce(lambda r,k: r+['-metadata', '{:s}={:s}'.format(k, tags[k])], tags.keys(), []) + \
         [tmp_dest])

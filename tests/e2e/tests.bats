@@ -90,6 +90,8 @@ assertTag() {
 	assertTag "$FILE" album 'Tour De Manège Vol.4 : The Wizards'
 	assertTag "$FILE" album_artist 'Tour De Manège'
 	assertTag "$FILE" track '13/28'
+	assertTag "$FILE" yt_id pKgJppNfR1g
+	assertTag "$FILE" yt_source youtube
 	FILE="$DIR/19 - Slivanoe - Persistant Dreams.opus"
 	assertTag "$FILE" title 'Persistant Dreams'
 	assertTag "$FILE" artist 'Slivanoé'
