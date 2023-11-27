@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='beets-ytimport',
-    version='0.0.0-dev',
+    version='1.3.1',
     author='Max Goltzsche',
     description='Download audio from Youtube into your Beets library',
     long_description=long_description,
