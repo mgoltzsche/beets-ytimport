@@ -49,6 +49,7 @@ def get_tags(info):
 def extend_chapter_tags(chapters, tags):
     for c in chapters:
         c['tags'] = tags | c['tags']
+        c['tags']['yt_split'] = '1'
 
 def append_title_to_comment(chapters):
     for c in chapters:

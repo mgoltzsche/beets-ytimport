@@ -15,6 +15,7 @@ class YtImportPlugin(BeetsPlugin):
         'like': types.BOOLEAN,
         'yt_id': types.STRING,
         'yt_source': types.STRING,
+        'yt_split': types.BOOLEAN,
         'yt_likes': types.INTEGER,
         'yt_dislikes': types.INTEGER,
         'yt_views': types.INTEGER,
