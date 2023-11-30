@@ -128,11 +128,12 @@ def chapter2track(file, chapter, i, chapterCount, dest_dir):
     if end != 0:
         end /= 1000
     print('  Extracting track {:s}: {:s}'.format(tags['track'], tags['title']))
-    format_opt = ext == '.opus' and [] or ['-f', 'mp4']
+    format_opt = ext == '.opus' and ['-f', 'opus'] or ['-f', 'mp4']
     subprocess.run(['ffmpeg', '-y', '-hide_banner', '-loglevel', 'error', \
         '-ss', str(start), '-to', str(end), \
-        '-i', file, '-movflags', 'use_metadata_tags', '-t', str(end-start), \
-        '-map', '0:a', '-map', '0:v', '-c', 'copy'] + format_opt + \
-        reduce(lambda r,k: r+['-metadata', '{:s}={:s}'.format(k, tags[k])], tags.keys(), []) + \
+        '-i', file, '-t', str(end-start), '-map_chapters', '-1'] + \
+        format_opt + \
+        ['-map', '0:a', '-c', 'copy'] + \
+        reduce(lambda r,k: r+['-metadata:s:a:0', '{:s}={:s}'.format(k, tags[k])], tags.keys(), []) + \
         [tmp_dest])
     os.rename(tmp_dest, dest)
