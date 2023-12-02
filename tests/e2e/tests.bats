@@ -20,7 +20,7 @@ assertTag() {
 		printf "Found files:\n%s" "$(ls -la "$DIR")" >&2
 		return 1
 	fi
-	ffprobe -v quiet -show_format -show_streams -print_format json "$1" | jq -e --arg k "$2" --arg v "$3" --arg f "$1" 'if .format.tags[$k]==$v or .streams[0].tags[$k]==$v then true else error("file "+$f+"\nUnexpected "+$k+" tag value:\n  "+(.format.tags[$k]==$v or .streams[0].tags[$k])+"\nexpects:\n  "+$v) end' >/dev/null
+	ffprobe -v quiet -show_format -show_streams -print_format json "$1" | jq -e --arg k "$2" --arg v "$3" --arg f "$1" 'if .format.tags[$k]==$v or .streams[0].tags[$k]==$v then true else error("file "+$f+"\nUnexpected "+$k+" tag value:\n  "+(.format.tags[$k] or .streams[0].tags[$k])+"\nexpects:\n  "+$v) end' >/dev/null
 }
 
 @test 'download track from youtube' {
@@ -186,6 +186,14 @@ assertTag() {
 	FILE="$YTDIR/singles/Daso - Open Cage [3shC0WBqdrU].opus"
 	assertTag "$FILE" title 'Open Cage'
 	assertTag "$FILE" artist 'Daso'
+}
+
+@test 'trim Official suffix from artist' {
+	# 'Poly' by 'Thylacine Official'
+	beet ytimport --no-import https://www.youtube.com/watch?v=OBQVwuR2A3U
+	FILE="$YTDIR/singles/Thylacine - Poly [OBQVwuR2A3U].opus"
+	assertTag "$FILE" title 'Poly'
+	assertTag "$FILE" artist 'Thylacine'
 }
 
 # https://www.youtube.com/watch?v=4D8YPDdsxYU - tested/fixed

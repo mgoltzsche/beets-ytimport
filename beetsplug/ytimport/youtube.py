@@ -71,6 +71,8 @@ def download(urls, target_dir, format='bestaudio/best', min_len=60, max_len=7200
         '%(webpage_url)s %(title)s:%(meta_comment)s',
         # Use uploader name without suffix as artist tag.
         uploader_as_artist_rule,
+        # Trim ' Official' suffix from artist
+        r'artist:^(?P<artist>.+) Official$|',
         # Extract track number and artist from title tag.
         title_extraction_rule,
         # Use artist as album_artist
