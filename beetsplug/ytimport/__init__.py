@@ -96,8 +96,8 @@ class YtImportPlugin(BeetsPlugin):
                 if opts.pretend:
                     cmd += ['--pretend']
                 if opts.group_albums:
-                    subprocess.run(cmd + ['-s', singles_dir])
                     subprocess.run(cmd + ['-g', albums_dir])
+                    subprocess.run(cmd + ['-s', singles_dir])
                 else:
                     subprocess.run(cmd + ['-s', ytdir])
             else:
