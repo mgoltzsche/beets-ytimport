@@ -38,6 +38,7 @@ ytimport:
   max_length_nochapter: 900 # 15m; max track length when no chapters defined
   split_tracks: true
   group_albums: true
+  quiet_fallback: skip # optional; alternatively, to import as is, set 'asis'.
 ```
 
 For more information, see [CLI](#cli).
@@ -88,6 +89,8 @@ Options:
   --max-length-nochapter=SECONDS
                         max track length in seconds when no chapters defined
   -q, --quiet           don't prompt for input when importing
+  --quiet-fallback=skip|asis
+                        decision in quiet mode when there is no strong match
   --pretend             don't import but print the files when importing
 ```
 

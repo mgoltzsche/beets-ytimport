@@ -93,6 +93,8 @@ class YtImportPlugin(BeetsPlugin):
                     cmd += ['--set', opts.set]
                 if opts.quiet:
                     cmd += ['-q']
+                    if opts.quiet_fallback:
+                        cmd += ['--quiet-fallback', opts.quiet_fallback]
                 if opts.pretend:
                     cmd += ['--pretend']
                 if opts.group_albums:
@@ -164,6 +166,9 @@ class YtImportPlugin(BeetsPlugin):
         p.add_option('-q', '--quiet', action='store_true',
             default=False,
             dest='quiet', help="don't prompt for input when importing")
+        p.add_option('--quiet-fallback', type='string', metavar='skip|asis',
+            default=('quiet_fallback' in self.config and self.config['quiet_fallback'].get() or None),
+            dest='quiet_fallback', help='decision in quiet mode when there is no strong match')
         p.add_option('--pretend', action='store_true',
             default=False,
             dest='pretend', help="don't import but print the files when importing")
