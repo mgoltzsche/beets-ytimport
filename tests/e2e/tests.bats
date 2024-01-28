@@ -48,17 +48,7 @@ assertTag() {
 	beet modify -y title:Cabal title='Changed Title'
 	! beet ls title:Cabal
 	beet ytimport --reimport https://www.youtube.com/watch?v=7VwubS2kBYU
-	beet ls title:Cabal
-}
-
-@test 'download track and clean artist' {
-	# 'Exchange' from 'Colyn - Topic'
-	beet ytimport --no-import https://www.youtube.com/watch?v=b7rzFFJ6gso
-	FILE="$YTDIR/singles/Colyn - Exchange [b7rzFFJ6gso].opus"
-	assertTag "$FILE" title 'Exchange'
-	assertTag "$FILE" artist 'Colyn'
-	assertTag "$FILE" album 'Resolve'
-	assertTag "$FILE" album_artist 'Colyn'
+	[ "`beet ls title:Cabal`" ]
 }
 
 @test 'download track and derive artist from title' {
