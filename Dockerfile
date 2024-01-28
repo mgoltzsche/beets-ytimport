@@ -1,4 +1,4 @@
-FROM ghcr.io/mgoltzsche/beets-plugins:0.9.0
+FROM ghcr.io/mgoltzsche/beets-plugins:0.13.1
 
 # Install bats
 USER root:root
