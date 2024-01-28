@@ -42,7 +42,7 @@ beets-sh: beets-container
 		-v "`pwd`/example_beets_config.yaml:/data/beets/config.yaml" \
 		-v /run:/host/run \
 		-e PULSE_SERVER=unix:/host/run/user/`id -u`/pulse/native \
-		--entrypoint sh $(BEETS_IMG)
+		$(BEETS_IMG) sh
 
 .PHONY: beets-container
 beets-container: wheel
