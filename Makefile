@@ -17,9 +17,11 @@ wheel: clean python-container
 .PHONY: test
 test: beets-container
 	# Run unit tests
+	mkdir -p data/beets
 	@docker run --rm -u `id -u`:`id -g` \
 		-v "`pwd`:/plugin" -w /plugin \
-		--entrypoint sh $(BEETS_IMG) -c \
+		-v "`pwd`/data:/data" \
+		$(BEETS_IMG) sh -c \
 		'set -x; python -m unittest discover /plugin/tests'
 
 .PHONY: test-e2e
@@ -30,7 +32,7 @@ test-e2e: beets-container
                 -v "`pwd`:/plugin" -w /plugin \
 		-v "`pwd`/data:/data" \
 		-v "`pwd`/example_beets_config.yaml:/data/beets/config.yaml" \
-                --entrypoint sh $(BEETS_IMG) -c \
+                $(BEETS_IMG) sh -c \
                 'set -x; bats -T tests/e2e'
 
 .PHONY: beets-sh

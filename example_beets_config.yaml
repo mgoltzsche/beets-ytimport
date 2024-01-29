@@ -18,6 +18,9 @@ plugins:
 - duplicates
 - web
 
+ui:
+  terminal_width: 160
+
 import:
   write: true
   copy: true
