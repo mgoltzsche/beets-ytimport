@@ -1,10 +1,12 @@
 import os
 import pathlib
-import subprocess
 import mediafile
 from beets.plugins import BeetsPlugin
 from beets.dbcore import types
 from beets.ui import Subcommand
+from beets.ui import _store_dict
+from beets.ui.commands import import_files
+from beets import config
 from optparse import OptionParser
 from confuse import ConfigSource, load_yaml
 import beetsplug.ytimport.youtube
@@ -84,24 +86,11 @@ class YtImportPlugin(BeetsPlugin):
                 print('Nothing to download')
             if opts.do_import:
                 print('Importing downloaded songs into beets library')
-                cmd = ['beet', 'import', '-pm']
-                if opts.reimport:
-                    cmd += ['-I']
-                else:
-                    cmd += ['-i']
-                if opts.set:
-                    cmd += ['--set', opts.set]
-                if opts.quiet:
-                    cmd += ['-q']
-                    if opts.quiet_fallback:
-                        cmd += ['--quiet-fallback', opts.quiet_fallback]
-                if opts.pretend:
-                    cmd += ['--pretend']
                 if opts.group_albums:
-                    subprocess.run(cmd + ['-g', albums_dir])
-                    subprocess.run(cmd + ['-s', singles_dir])
+                    self._import_files(lib, opts, albums_dir, True)
+                    self._import_files(lib, opts, singles_dir, False)
                 else:
-                    subprocess.run(cmd + ['-s', ytdir])
+                    self._import_files(lib, opts, ytdir, False)
             else:
                 print('Skipping import')
 
@@ -152,7 +141,9 @@ class YtImportPlugin(BeetsPlugin):
             default=self.config['reimport'].get(),
             dest='reimport', help="don't re-download and re-import tracks")
         p.add_option('--set', type='string', metavar='KEY=VALUE',
-            default=self.config['set'].get(),
+            default={k: str(v.get()) for k,v in self.config['set'].items()},
+            action="callback",
+            callback=_store_dict,
             dest='set', help='set a field on import, using KEY=VALUE format')
         p.add_option('--min-length', type='int', metavar='SECONDS',
             default=self.config['min_length'].get(),
@@ -176,3 +167,35 @@ class YtImportPlugin(BeetsPlugin):
         c = Subcommand('ytimport', parser=p, help='import songs from Youtube')
         c.func = run_import_cmd
         return [c]
+
+    def _import_files(self, lib, opts, src_dir, group_albums):
+        user_incremental = config['import']['incremental'].get()
+        user_resume = config['import']['resume'].get()
+        user_move = config['import']['move'].get()
+        user_quiet = config['import']['quiet'].get()
+        user_quiet_fallback = config['import']['quiet_fallback'].get()
+        user_group_albums = config['import']['group_albums'].get()
+        user_singletons = config['import']['singletons'].get()
+        user_pretend = config['import']['pretend'].get()
+        user_set_fields = {k: v.get() for k,v in config['import']['set_fields'].items()}
+        try:
+            config['import']['incremental'] = not opts.reimport
+            config['import']['resume'] = True
+            config['import']['move'] = True
+            config['import']['quiet'] = opts.quiet
+            config['import']['quiet_fallback'] = opts.quiet_fallback
+            config['import']['pretend'] = opts.pretend
+            config['import']['group_albums'] = group_albums
+            config['import']['singletons'] = not group_albums
+            config['import']['set_fields'] = opts.set
+            import_files(lib, [src_dir], None)
+        finally: # revert global import configuration changes
+            config['import']['incremental'] = user_incremental
+            config['import']['resume'] = user_resume
+            config['import']['move'] = user_move
+            config['import']['quiet'] = user_quiet
+            config['import']['quiet_fallback'] = user_quiet_fallback
+            config['import']['pretend'] = user_pretend
+            config['import']['group_albums'] = user_group_albums
+            config['import']['singletons'] = user_singletons
+            config['import']['set_fields'] = user_set_fields

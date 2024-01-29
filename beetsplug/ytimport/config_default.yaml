@@ -6,7 +6,7 @@ url_file: ''
 likes: false
 max_likes: 15
 auth_headers: # file path
-set: ''
+set: {}
 min_length: 60 # 1m; min track length in seconds
 max_length: 7200 # 2h; max track length in seconds
 max_length_nochapter: 900 # 15m; max track length when no chapters defined

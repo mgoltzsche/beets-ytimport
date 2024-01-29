@@ -32,7 +32,8 @@ ytimport:
   import: true
   likes: false
   max_likes: 3
-  set: 'somefancyfield=1'
+  set:
+    somefancyfield: 1
   min_length: 60
   max_length: 7200
   split_tracks: true

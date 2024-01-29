@@ -31,7 +31,8 @@ ytimport:
   url_file: ''
   likes: false
   max_likes: 15
-  set: ''
+  set:
+    loved: true
   auth_headers: /path/to/your/http/headers
   min_length: 60 # 1m; min track length in seconds
   max_length: 7200 # 2h; max track length in seconds
