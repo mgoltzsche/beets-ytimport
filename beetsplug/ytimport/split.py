@@ -18,6 +18,8 @@ def chapters2tracks(file, dest_dir):
     info = get_info(file)
     tags = get_tags(info)
     chapters = info['chapters']
+    coverart_file = os.path.join(dest_dir, 'cover.jpg')
+
     if len(chapters) < 2:
         return False
 
@@ -31,6 +33,11 @@ def chapters2tracks(file, dest_dir):
 
     for i in range(0, len(chapters)):
         chapter2track(file, chapters[i], i, len(chapters), dest_dir)
+
+    subprocess.run(['ffmpeg', '-i', file, '-an', '-c:v',
+        'copy', coverart_file,
+        '-hide_banner', '-loglevel', 'error',])
+
     return True
 
 def get_info(file):

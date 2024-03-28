@@ -40,6 +40,9 @@ ytimport:
   split_tracks: true
   group_albums: true
   quiet_fallback: skip # optional; alternatively, to import as is, set 'asis'.
+
+clutter:
+  - cover.jpg
 ```
 
 For more information, see [CLI](#cli).

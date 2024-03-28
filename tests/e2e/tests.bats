@@ -51,6 +51,27 @@ assertTag() {
 	[ "`beet ls title:Cabal`" ]
 }
 
+@test 'download album and trim track number from chapter title' {
+	# 'Black Focus' album with track '3) Remembrance'
+	beet ytimport --no-import https://www.youtube.com/watch?v=4D8YPDdsxYU
+	DIR="$YTDIR/albums/Yussef Kamaal - Black Focus (Full Album Upload) [4D8YPDdsxYU]"
+	FILE="$DIR/03 - Remembrance.opus"
+	assertTag "$FILE" title 'Remembrance'
+	assertTag "$FILE" artist 'Yussef Kamaal'
+	assertTag "$FILE" album 'Black Focus'
+	assertTag "$FILE" album_artist 'Yussef Kamaal'
+	[ -f "$DIR/cover.jpg" ]
+}
+
+@test 'import album' {
+	# Import previously downloaded 'Black Focus' album from Yussef Kamaal
+	beet ytimport -q https://www.youtube.com/watch?v=4D8YPDdsxYU
+	[ "$(beet ls -a Black Focus)" = 'Yussef Kamaal - Black Focus' ]
+	# TODO: enable assertion when cover art import works.
+	# See https://github.com/beetbox/beets/issues/5167
+	#[ -f "$(beet ls -a Black Focus -f '$path')/cover.jpg" ]
+}
+
 @test 'download track and derive artist from title' {
 	# '07.  Lemon D - Deep Space'
 	beet ytimport --no-import https://www.youtube.com/watch?v=_3pzM2GoSvU
@@ -102,16 +123,6 @@ assertTag() {
 	assertTag "$FILE" album_artist 'THE SELECTER'
 	assertTag "$FILE" track '9/14'
 	assertTag "$FILE" date 1980
-}
-
-@test 'download album and trim track number from chapter title' {
-	# 'Black Focus' album with track '3) Remembrance'
-	beet ytimport --no-import https://www.youtube.com/watch?v=4D8YPDdsxYU
-	FILE="$YTDIR/albums/Yussef Kamaal - Black Focus (Full Album Upload) [4D8YPDdsxYU]/03 - Remembrance.opus"
-	assertTag "$FILE" title 'Remembrance'
-	assertTag "$FILE" artist 'Yussef Kamaal'
-	assertTag "$FILE" album 'Black Focus'
-	assertTag "$FILE" album_artist 'Yussef Kamaal'
 }
 
 @test 'download album and trim colon separated track number from chapter title' {
@@ -185,15 +196,3 @@ assertTag() {
 	assertTag "$FILE" title 'Poly'
 	assertTag "$FILE" artist 'Thylacine'
 }
-
-# https://www.youtube.com/watch?v=4D8YPDdsxYU - tested/fixed
-# https://www.youtube.com/watch?v=F2Rx2lsD_vE - tested
-# https://www.youtube.com/watch?v=Hz62mFXg0xg - fixed
-
-# https://www.youtube.com/watch?v=VHXvfSmyjj4
-# https://www.youtube.com/watch?v=cddSQX05Q2M
-# https://www.youtube.com/watch?v=mNk9cbJqtjs
-# https://www.youtube.com/watch?v=yIXCBFROk70
-# https://www.youtube.com/watch?v=zr2jPGN2GN8
-# 2: Eviscerate
-# https://www.youtube.com/watch?v=zyFFPE0Kxzw - fixed but needs test

@@ -10,6 +10,7 @@ plugins:
 - ytimport
 - chroma
 - lastgenre
+- fetchart
 - edit
 - info
 - describe
@@ -26,6 +27,10 @@ import:
   copy: true
   incremental: true
   quiet: false
+  quiet_fallback: asis
+
+clutter:
+- cover.jpg
 
 chroma:
   auto: true

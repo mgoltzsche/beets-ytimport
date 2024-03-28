@@ -182,20 +182,21 @@ class YtImportPlugin(BeetsPlugin):
             config['import']['incremental'] = not opts.reimport
             config['import']['resume'] = True
             config['import']['move'] = True
-            config['import']['quiet'] = opts.quiet
-            config['import']['quiet_fallback'] = opts.quiet_fallback
             config['import']['pretend'] = opts.pretend
             config['import']['group_albums'] = group_albums
             config['import']['singletons'] = not group_albums
             config['import']['set_fields'] = opts.set
+            config['import']['quiet'] = opts.quiet
+            if opts.quiet_fallback:
+                config['import']['quiet_fallback'] = opts.quiet_fallback
             import_files(lib, [src_dir], None)
         finally: # revert global import configuration changes
             config['import']['incremental'] = user_incremental
             config['import']['resume'] = user_resume
             config['import']['move'] = user_move
-            config['import']['quiet'] = user_quiet
-            config['import']['quiet_fallback'] = user_quiet_fallback
             config['import']['pretend'] = user_pretend
             config['import']['group_albums'] = user_group_albums
             config['import']['singletons'] = user_singletons
             config['import']['set_fields'] = user_set_fields
+            config['import']['quiet'] = user_quiet
+            config['import']['quiet_fallback'] = user_quiet_fallback
