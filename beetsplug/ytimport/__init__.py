@@ -87,10 +87,10 @@ class YtImportPlugin(BeetsPlugin):
             if opts.do_import:
                 print('Importing downloaded songs into beets library')
                 if opts.group_albums:
-                    self._import_files(lib, opts, albums_dir, True)
-                    self._import_files(lib, opts, singles_dir, False)
+                    self._import_files(lib, opts, albums_dir, False)
+                    self._import_files(lib, opts, singles_dir, True)
                 else:
-                    self._import_files(lib, opts, ytdir, False)
+                    self._import_files(lib, opts, ytdir, True)
             else:
                 print('Skipping import')
 
@@ -168,13 +168,12 @@ class YtImportPlugin(BeetsPlugin):
         c.func = run_import_cmd
         return [c]
 
-    def _import_files(self, lib, opts, src_dir, group_albums):
+    def _import_files(self, lib, opts, src_dir, singletons):
         user_incremental = config['import']['incremental'].get()
         user_resume = config['import']['resume'].get()
         user_move = config['import']['move'].get()
         user_quiet = config['import']['quiet'].get()
         user_quiet_fallback = config['import']['quiet_fallback'].get()
-        user_group_albums = config['import']['group_albums'].get()
         user_singletons = config['import']['singletons'].get()
         user_pretend = config['import']['pretend'].get()
         user_set_fields = {k: v.get() for k,v in config['import']['set_fields'].items()}
@@ -183,8 +182,7 @@ class YtImportPlugin(BeetsPlugin):
             config['import']['resume'] = True
             config['import']['move'] = True
             config['import']['pretend'] = opts.pretend
-            config['import']['group_albums'] = group_albums
-            config['import']['singletons'] = not group_albums
+            config['import']['singletons'] = singletons
             config['import']['set_fields'] = opts.set
             config['import']['quiet'] = opts.quiet
             if opts.quiet_fallback:
@@ -195,7 +193,6 @@ class YtImportPlugin(BeetsPlugin):
             config['import']['resume'] = user_resume
             config['import']['move'] = user_move
             config['import']['pretend'] = user_pretend
-            config['import']['group_albums'] = user_group_albums
             config['import']['singletons'] = user_singletons
             config['import']['set_fields'] = user_set_fields
             config['import']['quiet'] = user_quiet

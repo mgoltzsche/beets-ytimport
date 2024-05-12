@@ -47,7 +47,7 @@ assertTag() {
 	# 'Cabal' from 'Marcus Intalex (Thema)'
 	beet modify -y title:Cabal title='Changed Title'
 	! beet ls title:Cabal
-	beet ytimport --reimport https://www.youtube.com/watch?v=7VwubS2kBYU
+	beet ytimport -q --reimport https://www.youtube.com/watch?v=7VwubS2kBYU
 	[ "`beet ls title:Cabal`" ]
 }
 
@@ -67,9 +67,7 @@ assertTag() {
 	# Import previously downloaded 'Black Focus' album from Yussef Kamaal
 	beet ytimport -q https://www.youtube.com/watch?v=4D8YPDdsxYU
 	[ "$(beet ls -a Black Focus)" = 'Yussef Kamaal - Black Focus' ]
-	# TODO: enable assertion when cover art import works.
-	# See https://github.com/beetbox/beets/issues/5167
-	#[ -f "$(beet ls -a Black Focus -f '$path')/cover.jpg" ]
+	[ -f "$(beet ls -a Black Focus -f '$path')/cover.jpg" ]
 }
 
 @test 'download track and derive artist from title' {
