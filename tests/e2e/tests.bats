@@ -171,6 +171,17 @@ assertTag() {
 	assertTag "$FILE" artist 'Cabaret Nocturne'
 }
 
+@test 'download tracks specified by remote --url-file' {
+	URLFILE_URL='https://raw.githubusercontent.com/mgoltzsche/beets-ytimport/49d30714261928b9c9f8f3452ca9fa9a2dadd486/tests/e2e/example-urls2.txt'
+	beet ytimport --no-import --url-file "$URLFILE_URL"
+	FILE="$YTDIR/singles/Tuba Skinny - Jubilee Stomp [ufnQf9fwuds].opus"
+	assertTag "$FILE" title 'Jubilee Stomp'
+	assertTag "$FILE" artist 'Tuba Skinny'
+	FILE="$YTDIR/singles/Stereo Total - Musique Automatique [2b_srKF3G6w].opus"
+	assertTag "$FILE" title 'Musique Automatique'
+	assertTag "$FILE" artist 'Stereo Total'
+}
+
 @test 'truncate long file name' {
 	# 'Le Monstre du Lockdown (feat. Vitess, Oden & Fatzo, Jeff The Fool, Marwan Sabb)' by 'Herr Krank, Deborah Aime La Bagarre, Vitess, Oden & Fatzo, Jeff The F...'
 	beet ytimport --no-import https://www.youtube.com/watch?v=WxX7Pl2Y988

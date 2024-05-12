@@ -1,6 +1,8 @@
 import os
+import re
 import pathlib
 import mediafile
+import requests
 from beets.plugins import BeetsPlugin
 from beets.dbcore import types
 from beets.ui import Subcommand
@@ -51,9 +53,15 @@ class YtImportPlugin(BeetsPlugin):
                 f.close()
             urls = [] + args
             if opts.url_file:
-                f = open(opts.url_file, 'r')
-                urls += f.readlines()
-                f.close()
+                add_urls = []
+                if re.match(r'^https?://', opts.url_file):
+                    add_urls = requests.get(opts.url_file).text.strip('\n').split('\n')
+                else:
+                    f = open(opts.url_file, 'r')
+                    add_urls = f.readlines()
+                    f.close()
+                urls += add_urls
+                self._log.info('Found {:n} URLs within URL file', len(add_urls))
             singles_dir = os.path.join(ytdir, 'singles')
             albums_dir = os.path.join(ytdir, 'albums')
             pathlib.Path(singles_dir).mkdir(parents=True, exist_ok=True)
@@ -62,19 +70,21 @@ class YtImportPlugin(BeetsPlugin):
                 if opts.url_file or len(args) > 0:
                     raise Exception('Using --likes option in conjunction with --url-file or URL args is not supported!')
                 # TODO: mark like as tag within downloaded file already (to be able to distinguish likes also on local reimport)
-                print('Obtaining your liked songs from Youtube...')
+                self._log.info('Obtaining your liked songs from Youtube...')
                 if not headers:
-                    print('Using interactive authentication. To enable non-interactive authentication, set --auth-headers')
+                    self._log.info('Using interactive authentication. To enable non-interactive authentication, set --auth-headers')
                 auth = youtube.login(headers)
                 likedIds = youtube.likes(auth, opts.max_likes)
                 if len(likedIds) > opts.max_likes:
                     likedIds = likedIds[:opts.max_likes]
-                print('Found {:n} liked songs'.format(len(likedIds)))
+                self._log.info('Found {:n} liked songs', len(likedIds))
                 urls += ['https://www.youtube.com/watch?v='+id for id in likedIds]
             if not opts.reimport:
-                urls = [u for u in urls if not lib.items('comments:'+u)]
+                unknown_urls = [u for u in urls if not lib.items('comments:'+u)]
+                self._log.info('Ignoring {:n} known URLs', len(urls)-len(unknown_urls))
+                urls = unknown_urls
             if urls:
-                print('Downloading {:n} song(s) to {:s}'.format(len(urls), ytdir))
+                self._log.info('Downloading {:n} song(s) to {:s}', len(urls), ytdir)
                 h = {}
                 # TODO: authenticate download requests.
                 # The following makes download requests return a 400 reponse.
@@ -83,16 +93,16 @@ class YtImportPlugin(BeetsPlugin):
                 #    h = dict([l.split(': ', 1) for l in headers.strip().split('\n')[1:]])
                 youtube.download(urls, ytdir, format=opts.format, min_len=opts.min_length, max_len=opts.max_length, max_len_nochapter=opts.max_length_nochapter, split=opts.split_tracks, like=opts.likes, reimport=opts.reimport, auth_headers=h)
             else:
-                print('Nothing to download')
+                self._log.info('Nothing to download')
             if opts.do_import:
-                print('Importing downloaded songs into beets library')
+                self._log.info('Importing downloaded songs into beets library')
                 if opts.group_albums:
                     self._import_files(lib, opts, albums_dir, False)
                     self._import_files(lib, opts, singles_dir, True)
                 else:
                     self._import_files(lib, opts, ytdir, True)
             else:
-                print('Skipping import')
+                self._log.info('Skipping import')
 
         p = OptionParser()
         p.add_option('--directory', type='string', metavar='DIR',
