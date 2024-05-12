@@ -114,9 +114,9 @@ class YtImportPlugin(BeetsPlugin):
         p.add_option('--auth-headers', type='string', metavar='FILE',
             default=self.config['auth_headers'].get(),
             dest='auth_headers', help="path to a file containing the HTTP headers of an authenticated POST request to music.youtube.com, copied from your browser's development tool")
-        p.add_option('--url-file', type='string', metavar='FILE',
+        p.add_option('--url-file', type='string', metavar='URL',
             default=self.config['url_file'].get(),
-            dest='url_file', help='file containing a download URL per line')
+            dest='url_file', help='URL/path to a file containing a download URL per line')
         p.add_option('--likes', action='store_true',
             default=self.config['likes'].get(),
             dest='likes', help='download liked songs')
