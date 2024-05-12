@@ -174,6 +174,7 @@ class YtImportPlugin(BeetsPlugin):
         user_move = config['import']['move'].get()
         user_quiet = config['import']['quiet'].get()
         user_quiet_fallback = config['import']['quiet_fallback'].get()
+        user_group_albums = config['import']['group_albums'].get()
         user_singletons = config['import']['singletons'].get()
         user_pretend = config['import']['pretend'].get()
         user_set_fields = {k: v.get() for k,v in config['import']['set_fields'].items()}
@@ -182,6 +183,7 @@ class YtImportPlugin(BeetsPlugin):
             config['import']['resume'] = True
             config['import']['move'] = True
             config['import']['pretend'] = opts.pretend
+            config['import']['group_albums'] = False
             config['import']['singletons'] = singletons
             config['import']['set_fields'] = opts.set
             config['import']['quiet'] = opts.quiet
@@ -193,6 +195,7 @@ class YtImportPlugin(BeetsPlugin):
             config['import']['resume'] = user_resume
             config['import']['move'] = user_move
             config['import']['pretend'] = user_pretend
+            config['import']['group_albums'] = user_group_albums
             config['import']['singletons'] = user_singletons
             config['import']['set_fields'] = user_set_fields
             config['import']['quiet'] = user_quiet
