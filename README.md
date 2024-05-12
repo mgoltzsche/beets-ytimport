@@ -4,8 +4,8 @@ A [beets](https://github.com/beetbox/beets) plugin to download audio from [Youtu
 
 Differences compared to the [ydl plugin](https://github.com/vmassuchetto/beets-ydl):
 * Supports downloading liked songs into your beets library (using [ytmusicapi](https://github.com/sigma67/ytmusicapi)).
-* Downloading opus files from Youtube and mp3 from SoundCloud, avoiding re-encoding lossy audio (which would decrease quality).
 * Uses [yt-dlp](https://github.com/yt-dlp/yt-dlp) instead of [ytdl](https://github.com/ytdl-org/youtube-dl) to download the audio files.
+* Prefers to download Opus files, avoiding re-encoding lossy audio (which would decrease quality).
 
 ## Installation
 

@@ -152,7 +152,7 @@ assertTag() {
 @test 'download track from soundcloud' {
 	# 'Chris.SU - Mercury [C4C Recordings]'
 	beet ytimport --no-import 'https://soundcloud.com/chrissuofficial/mercury?si=84a62ed3a35640a6913edd5ef19cfa9b&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing'
-	FILE="$YTDIR/singles/Chris SU - Mercury [C4C Recordings] [547755837].mp3"
+	FILE="$YTDIR/singles/Chris SU - Mercury [C4C Recordings] [547755837].opus"
 	assertTag "$FILE" title 'Mercury [C4C Recordings]'
 	assertTag "$FILE" artist Chris.SU
 	assertTag "$FILE" album_artist Chris.SU
