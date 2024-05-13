@@ -20,6 +20,12 @@ Enable the plugin and add a `ytimport` section to your beets `config.yaml` as fo
 plugins:
   - ytimport
 
+import:
+  move: true
+# Alternatively, you can declare left-over cover art within the import source dir as clutter:
+#clutter:
+#  - cover.jpg
+
 ytimport:
   directory: /path/to/youtube/cache # required
   import: true
@@ -40,9 +46,6 @@ ytimport:
   split_tracks: true
   group_albums: true
   quiet_fallback: skip # optional; alternatively, to import as is, set 'asis'.
-
-clutter:
-  - cover.jpg
 ```
 
 For more information, see [CLI](#cli).

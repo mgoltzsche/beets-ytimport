@@ -21,13 +21,10 @@ plugins:
 
 import:
   write: true
-  copy: true
+  move: true
   incremental: true
   quiet: false
   quiet_fallback: asis
-
-clutter:
-- cover.jpg
 
 chroma:
   auto: true
