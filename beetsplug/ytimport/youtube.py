@@ -15,7 +15,7 @@ def login(headers=None):
         return ytmusicapi.setup(headers_raw=headers)
     else:
         a = ytmusicapi.setup_oauth()
-        return json.dumps(a)
+        return json.dumps(a.as_dict())
 
 def likes(auth, max_tracks):
     yt = ytmusicapi.YTMusic(auth)
