@@ -42,8 +42,10 @@ jobs:
     - name: Unit test
       run: make test
 
-    - name: E2E test
-      run: make test-e2e
+    # TODO: Make e2e tests work again within CI.
+    #       They stopped working now apparently because youtube blocks unauthenticated requests from GHA.
+    #- name: E2E test
+    #  run: make test-e2e
 
     - name: Build wheel
       run: |
