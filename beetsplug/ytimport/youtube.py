@@ -10,11 +10,14 @@ from beetsplug.ytimport.safename import safe_name
 uploader_as_artist_rule = r'uploader:^(?P<artist>.+?)( (Official|Oficial))?( +- +Topic)?$'
 title_extraction_rule = r'title:(?i)^(\[[^\]]+\])? *((?P<track_number>0[1-9])\.? +)?(?P<artist>[^(]+?) +(-+|–|\||~|) +(?P<title>.+?) *((\(|\[)(HD|HQ|Official|FREE|video|lyrics?|music video)( .+|[^\w].*))?$|'
 
-def login(headers=None):
+def login(headers=None, oauth_client_id=None, oauth_client_secret=None):
     if headers:
         return ytmusicapi.setup(headers_raw=headers)
     else:
-        a = ytmusicapi.setup_oauth()
+        a = ytmusicapi.setup_oauth(
+            client_id=oauth_client_id,
+            client_secret=oauth_client_secret,
+        )
         return json.dumps(a.as_dict())
 
 def likes(auth, max_tracks):

@@ -48,18 +48,16 @@ class YtImportPlugin(BeetsPlugin):
             ytdir = opts.directory
             headers = opts.auth_headers
             if headers:
-                f = open(headers, 'r')
-                headers = f.read()
-                f.close()
+                with open(headers, 'r') as f:
+                    headers = f.read()
             urls = [] + args
             if opts.url_file:
                 add_urls = []
                 if re.match(r'^https?://', opts.url_file):
                     add_urls = requests.get(opts.url_file).text.strip('\n').split('\n')
                 else:
-                    f = open(opts.url_file, 'r')
-                    add_urls = f.readlines()
-                    f.close()
+                    with open(opts.url_file, 'r') as f:
+                        add_urls = f.readlines()
                 urls += add_urls
                 self._log.info('Found {:n} URLs within URL file', len(add_urls))
             singles_dir = os.path.join(ytdir, 'singles')
@@ -68,12 +66,18 @@ class YtImportPlugin(BeetsPlugin):
             pathlib.Path(albums_dir).mkdir(parents=False, exist_ok=True)
             if opts.likes:
                 if opts.url_file or len(args) > 0:
-                    raise Exception('Using --likes option in conjunction with --url-file or URL args is not supported!')
+                    raise Exception('ytimport: using --likes option in conjunction with --url-file or URL args is not supported!')
                 # TODO: mark like as tag within downloaded file already (to be able to distinguish likes also on local reimport)
                 self._log.info('Obtaining your liked songs from Youtube...')
                 if not headers:
                     self._log.info('Using interactive authentication. To enable non-interactive authentication, set --auth-headers')
-                auth = youtube.login(headers)
+                if not opts.oauth_client_id or not opts.oauth_client_secret:
+                    raise Exception('ytimport: neither auth_headers nor oauth_client_id and oauth_client_secret configured, see https://ytmusicapi.readthedocs.io/en/stable/setup/oauth.html')
+                auth = youtube.login(
+                    headers=headers,
+                    oauth_client_id=opts.oauth_client_id,
+                    oauth_client_secret=opts.oauth_client_secret,
+                )
                 likedIds = youtube.likes(auth, opts.max_likes)
                 if len(likedIds) > opts.max_likes:
                     likedIds = likedIds[:opts.max_likes]
@@ -164,6 +168,12 @@ class YtImportPlugin(BeetsPlugin):
         p.add_option('--max-length-nochapter', type='int', metavar='SECONDS',
             default=self.config['max_length_nochapter'].get(),
             dest='max_length_nochapter', help='max track length in seconds when no chapters defined')
+        p.add_option('--oauth-client-id', type='string',
+            default=os.environ.get('BEETS_YTIMPORT_OAUTH_CLIENT_ID') or self.config['oauth_client_id'].get(),
+            dest='oauth_client_id', help='OAuth client ID [BEETS_YTIMPORT_OAUTH_CLIENT_ID]')
+        p.add_option('--oauth-client-secret', type='string',
+            default=os.environ.get('BEETS_YTIMPORT_OAUTH_CLIENT_SECRET') or self.config['oauth_client_secret'].get(),
+            dest='oauth_client_secret', help='OAuth client secret [BEETS_YTIMPORT_OAUTH_CLIENT_SECRET]')
         p.add_option('-q', '--quiet', action='store_true',
             default=False,
             dest='quiet', help="don't prompt for input when importing")

@@ -9,6 +9,10 @@ RUN set -eux; \
 	ln -s /opt/bats/bin/bats /usr/local/bin/bats; \
 	rm -rf /tmp/bats-core-$BATS_VERSION
 
+RUN python3 -m pip install \
+		ytmusicapi==1.9.0 \
+		yt-dlp==2024.12.13
+
 # Install beets-ytimport from source
 COPY dist /plugin/dist
 RUN python -m pip install /plugin/dist/*
