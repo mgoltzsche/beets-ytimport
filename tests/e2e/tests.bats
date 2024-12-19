@@ -112,7 +112,7 @@ assertTag() {
 @test 'download and split album with year in title' {
 	# 'THE SELECTER - Too Much Pressure [FULL ALBUM] 1980 (LYRICS added in the comment section)'
 	beet ytimport --no-import https://www.youtube.com/watch?v=lutwqvQq5t8
-	DIR="$YTDIR/albums/THE SELECTER - Too Much Pressure [FULL ALBUM] 1980 (LYRICS added in the comment section) [lutwqvQq5t8]"
+	DIR="$YTDIR/albums/THE SELECTER - Too Much Pressure [FULL ALBUM] 1980 [lutwqvQq5t8]"
 	assertDirExists "$DIR"
 	FILE="$DIR/09 - Too Much Pressure.opus"
 	assertTag "$FILE" title 'Too Much Pressure'

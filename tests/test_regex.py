@@ -230,6 +230,33 @@ class TestRegex(unittest.TestCase):
                     'track_number': None,
                 },
             },
+            {
+                'name': 'strip "(video lyric)" suffix',
+                'input': 'fake artist - fake title (Video lyric)',
+                'expected': {
+                    'artist': 'fake artist',
+                    'title': 'fake title',
+                    'track_number': None,
+                },
+            },
+            {
+                'name': 'strip "(lyric video)" suffix',
+                'input': 'fake artist - fake title (Lyric video)',
+                'expected': {
+                    'artist': 'fake artist',
+                    'title': 'fake title',
+                    'track_number': None,
+                },
+            },
+            {
+                'name': 'strip "(music video)" suffix',
+                'input': 'fake artist - fake title (Music video)',
+                'expected': {
+                    'artist': 'fake artist',
+                    'title': 'fake title',
+                    'track_number': None,
+                },
+            },
         ]
         for c in testcases:
             m = p.match(c['input'])

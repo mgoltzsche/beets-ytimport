@@ -8,7 +8,7 @@ from beetsplug.ytimport.split import chapters2tracks
 from beetsplug.ytimport.safename import safe_name
 
 uploader_as_artist_rule = r'uploader:^(?P<artist>.+?)( (Official|Oficial))?( +- +Topic)?$'
-title_extraction_rule = r'title:^(\[[^\]]+\])? *((?P<track_number>0[1-9])\.? +)?(?P<artist>[^(]+?) +(-+|–|\||~|) +(?P<title>.+?) *((\(|\[)(HD|HQ|Official|FREE).+)?$|'
+title_extraction_rule = r'title:(?i)^(\[[^\]]+\])? *((?P<track_number>0[1-9])\.? +)?(?P<artist>[^(]+?) +(-+|–|\||~|) +(?P<title>.+?) *((\(|\[)(HD|HQ|Official|FREE|video|lyrics?|music video)( .+|[^\w].*))?$|'
 
 def login(headers=None):
     if headers:
