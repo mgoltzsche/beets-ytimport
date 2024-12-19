@@ -7,7 +7,7 @@ import yt_dlp
 from beetsplug.ytimport.split import chapters2tracks
 from beetsplug.ytimport.safename import safe_name
 
-uploader_as_artist_rule = r'uploader:^(?P<artist>.+?)( +- +Topic)?$'
+uploader_as_artist_rule = r'uploader:^(?P<artist>.+?)( (Official|Oficial))?( +- +Topic)?$'
 title_extraction_rule = r'title:^(\[[^\]]+\])? *((?P<track_number>0[1-9])\.? +)?(?P<artist>[^(]+?) +(-+|–|\||~|) +(?P<title>.+?) *((\(|\[)(HD|HQ|Official|FREE).+)?$|'
 
 def login(headers=None):
@@ -71,8 +71,6 @@ def download(urls, target_dir, format='bestaudio/best', min_len=60, max_len=7200
         '%(webpage_url)s %(title)s:%(meta_comment)s',
         # Use uploader name without suffix as artist tag.
         uploader_as_artist_rule,
-        # Trim ' Official' suffix from artist
-        r'artist:^(?P<artist>.+) Official$|',
         # Extract track number and artist from title tag.
         title_extraction_rule,
         # Use artist as album_artist

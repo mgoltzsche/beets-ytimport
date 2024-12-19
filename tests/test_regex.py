@@ -5,7 +5,7 @@ from beetsplug.ytimport.youtube import uploader_as_artist_rule
 
 class TestRegex(unittest.TestCase):
 
-    def test_clean_artist_rule(self):
+    def test_uploader_as_artist_rule(self):
         r = uploader_as_artist_rule
         self.assertRegex(r, '^uploader:')
         p = re.compile(r[9:])
@@ -22,6 +22,20 @@ class TestRegex(unittest.TestCase):
                 'input': 'Some-Name',
                 'expected': {
                     'artist': 'Some-Name',
+                },
+            },
+            {
+                'name': 'strip " Official" suffix',
+                'input': 'Some-Name X Official',
+                'expected': {
+                    'artist': 'Some-Name X',
+                },
+            },
+            {
+                'name': 'strip " Oficial" suffix',
+                'input': 'Ska-P Oficial',
+                'expected': {
+                    'artist': 'Ska-P',
                 },
             },
         ]
