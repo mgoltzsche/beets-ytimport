@@ -45,8 +45,8 @@ class YtImportPlugin(BeetsPlugin):
     def commands(self):
 
         def run_import_cmd(lib, opts, args):
-            ytdir = opts.directory
-            headers = opts.auth_headers
+            ytdir = os.path.expanduser(opts.directory)
+            headers = os.path.expanduser(opts.auth_headers)
             if headers:
                 with open(headers, 'r') as f:
                     headers = f.read()
