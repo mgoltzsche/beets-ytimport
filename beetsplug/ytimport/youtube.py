@@ -56,7 +56,7 @@ class SplitChaptersToTracksPP(yt_dlp.postprocessor.PostProcessor):
             os.remove(fname)
         return [], info
 
-def download(urls, target_dir, format='bestaudio/best', min_len=60, max_len=7200, max_len_nochapter=900, split=False, like=False, reimport=False, auth_headers={}):
+def download(urls, target_dir, cookiefile, format='bestaudio/best', min_len=60, max_len=7200, max_len_nochapter=900, split=False, like=False, reimport=False, auth_headers={}):
 
     def download_filter(info):
         duration = info.get('duration')
@@ -129,7 +129,7 @@ def download(urls, target_dir, format='bestaudio/best', min_len=60, max_len=7200
                 'key': 'XAttrMetadata',
             },
         ],
-        # TODO: maybe enable for premium quality: 'cookiefile': 'path/to/cookies.txt',
+        'cookiefile': cookiefile,
     }
     if not reimport:
         ytdl_opts['download_archive'] = target_dir+'/ytdownloads.txt'

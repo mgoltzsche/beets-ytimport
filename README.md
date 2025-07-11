@@ -39,13 +39,18 @@ ytimport:
   max_likes: 15
   set:
     loved: true
-  auth_headers: /path/to/your/http/headers
+  auth_headers: ''
+  oauth_client_id: ''
+  oauth_client_secret: ''
+  cookiefile: path/to/your/cookies
   min_length: 60 # 1m; min track length in seconds
   max_length: 7200 # 2h; max track length in seconds
   max_length_nochapter: 900 # 15m; max track length when no chapters defined
   split_tracks: true
   group_albums: true
   quiet_fallback: skip # optional; alternatively, to import as is, set 'asis'.
+  oauth_client_id: ''
+  oauth_client_secret: ''
 ```
 
 For more information, see [CLI](#cli).
@@ -57,7 +62,10 @@ Once you enabled the `ytimport` plugin within your beets configuration, you can 
 beet ytimport --likes --max-likes 3
 ```
 
-Please note that the command prompts you for Google authentication, unless you specified the `auth_headers` option within your beets configuration file pointing to a file containing HTTP headers (to get the HTTP headers, see [here](https://ytmusicapi.readthedocs.io/en/stable/setup/browser.html#copy-authentication-headers)).
+Please note that the command prompts you for Google authentication, unless you specified the `auth_headers` option within your beets configuration file pointing to a file containing HTTP headers (to get the HTTP headers, see [here](https://ytmusicapi.readthedocs.io/en/stable/setup/browser.html#copy-authentication-headers)). 
+For Authentication oauth clientID and Secret are required (this requres a google cloud console account, see [here](https://ytmusicapi.readthedocs.io/en/stable/setup/oauth.html)).
+Alternativly you can pass your cookie file to ytimport (to retrieve it use one of many cookie export extensions [eg](https://addons.mozilla.org/en-US/firefox/addon/cookies-txt/)
+To imp
 Import auto-tagger prompts can be disabled by specifying the `-q` option.
 You can interrupt and continue or repeat the command to synchronize likes from your Youtube account(s) into your beets library incrementally.
 
@@ -99,6 +107,8 @@ Options:
   --quiet-fallback=skip|asis
                         decision in quiet mode when there is no strong match
   --pretend             don't import but print the files when importing
+  --cookiefile          path to a file containing the cookies for a logged in
+                        user on music.youtube.com in Netscape format
 ```
 
 ## Development
