@@ -14,7 +14,6 @@ from confuse import ConfigSource, load_yaml
 import beetsplug.ytimport.youtube
 import beetsplug.ytimport.split
 
-youtube = beetsplug.ytimport.youtube
 class YtImportPlugin(BeetsPlugin):
     item_types = {
         'like': types.BOOLEAN,
