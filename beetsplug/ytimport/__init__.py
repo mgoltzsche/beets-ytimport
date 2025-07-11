@@ -119,6 +119,9 @@ class YtImportPlugin(BeetsPlugin):
         p.add_option('--auth-headers', type='string', metavar='FILE',
             default=self.config['auth_headers'].get(),
             dest='auth_headers', help="path to a file containing the HTTP headers of an authenticated POST request to music.youtube.com, copied from your browser's development tool")
+        p.add_option('--cookiefile', type='string', metavar='FILE',
+            default=self.config['cookiefile'].get(),
+            dest='cookiefile', help='path to a file containing the cookies for a logged in user on music.youtube.com in Netscape format')
         p.add_option('--url-file', type='string', metavar='URL',
             default=self.config['url_file'].get(),
             dest='url_file', help='URL/path to a file containing a download URL per line')
@@ -184,9 +187,6 @@ class YtImportPlugin(BeetsPlugin):
         p.add_option('--pretend', action='store_true',
             default=False,
             dest='pretend', help="don't import but print the files when importing")
-        p.add_option('--cookiefile', type='string', metavar='FILE',
-            default=self.config['cookiefile'].get(),
-            dest='cookiefile', help='cookiefile to use')
 
         c = Subcommand('ytimport', parser=p, help='import songs from Youtube')
         c.func = run_import_cmd
