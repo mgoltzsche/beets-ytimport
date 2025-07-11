@@ -46,6 +46,8 @@ ytimport:
   split_tracks: true
   group_albums: true
   quiet_fallback: skip # optional; alternatively, to import as is, set 'asis'.
+  oauth_client_id: ''
+  oauth_client_secret: ''
 ```
 
 For more information, see [CLI](#cli).
