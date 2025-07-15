@@ -47,6 +47,7 @@ class YtImportPlugin(BeetsPlugin):
         def run_import_cmd(lib, opts, args):
             ytdir = os.path.expanduser(opts.directory)
             headers = os.path.expanduser(opts.auth_headers)
+            cookiefile = os.path.expanduser(opts.cookiefile)
             if headers:
                 with open(headers, 'r') as f:
                     headers = f.read()
@@ -95,7 +96,7 @@ class YtImportPlugin(BeetsPlugin):
                 # Maybe a cookiefile with some picked cookies from the headers can be generated?
                 #if opts.auth and headers:
                 #    h = dict([l.split(': ', 1) for l in headers.strip().split('\n')[1:]])
-                youtube.download(urls, ytdir, format=opts.format, min_len=opts.min_length, max_len=opts.max_length, max_len_nochapter=opts.max_length_nochapter, split=opts.split_tracks, like=opts.likes, reimport=opts.reimport, auth_headers=h)
+                youtube.download(urls, ytdir, cookiefile, format=opts.format, min_len=opts.min_length, max_len=opts.max_length, max_len_nochapter=opts.max_length_nochapter, split=opts.split_tracks, like=opts.likes, reimport=opts.reimport, auth_headers=h)
             else:
                 self._log.info('Nothing to download')
             if opts.do_import:
@@ -118,6 +119,9 @@ class YtImportPlugin(BeetsPlugin):
         p.add_option('--auth-headers', type='string', metavar='FILE',
             default=self.config['auth_headers'].get(),
             dest='auth_headers', help="path to a file containing the HTTP headers of an authenticated POST request to music.youtube.com, copied from your browser's development tool")
+        p.add_option('--cookiefile', type='string', metavar='FILE',
+            default=self.config['cookiefile'].get(),
+            dest='cookiefile', help='path to a file containing the cookies for a logged in user on music.youtube.com in Netscape format')
         p.add_option('--url-file', type='string', metavar='URL',
             default=self.config['url_file'].get(),
             dest='url_file', help='URL/path to a file containing a download URL per line')
