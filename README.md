@@ -39,9 +39,9 @@ ytimport:
   max_likes: 15
   set:
     loved: true
-  auth_headers: ''
   oauth_client_id: ''
   oauth_client_secret: ''
+  auth_headers: ''
   cookiefile: path/to/your/cookies
   min_length: 60 # 1m; min track length in seconds
   max_length: 7200 # 2h; max track length in seconds
@@ -49,9 +49,15 @@ ytimport:
   split_tracks: true
   group_albums: true
   quiet_fallback: skip # optional; alternatively, to import as is, set 'asis'.
-  oauth_client_id: ''
-  oauth_client_secret: ''
 ```
+
+### Authentication
+
+In case the `likes` option is enabled and no `auth_headers` configured, ytimport prompts for Google authentication which requires OAuth client credentials (`oauth_client_id`, `oauth_client_secret`) to be configured (requres a Google Cloud Console account, see [here](https://ytmusicapi.readthedocs.io/en/stable/setup/oauth.html)).
+
+To configure `auth_headers` specify a path to a file containing HTTP headers (to get the HTTP headers, see [here](https://ytmusicapi.readthedocs.io/en/stable/setup/browser.html#copy-authentication-headers)).
+
+To download premium quality audio, let `cookiefile` point to a file that holds the HTTP cookies for a logged in premium user on music.youtube.com in Netscape format. To create the cookies file, you can use a browser extension, e.g. [cookies.txt](https://addons.mozilla.org/en-US/firefox/addon/cookies-txt/) for Firefox.
 
 For more information, see [CLI](#cli).
 
@@ -61,11 +67,8 @@ Once you enabled the `ytimport` plugin within your beets configuration, you can 
 ```sh
 beet ytimport --likes --max-likes 3
 ```
+Please note that the command prompts you for Google authentication which requires you to have OAuth client credentials configured, unless you specified the `auth_headers` option within your beets configuration file, see [authentication](#authentication).
 
-Please note that the command prompts you for Google authentication, unless you specified the `auth_headers` option within your beets configuration file pointing to a file containing HTTP headers (to get the HTTP headers, see [here](https://ytmusicapi.readthedocs.io/en/stable/setup/browser.html#copy-authentication-headers)). 
-For Authentication oauth clientID and Secret are required (this requres a google cloud console account, see [here](https://ytmusicapi.readthedocs.io/en/stable/setup/oauth.html)).
-Alternativly you can pass your cookie file to ytimport (to retrieve it use one of many cookie export extensions [eg](https://addons.mozilla.org/en-US/firefox/addon/cookies-txt/)
-To imp
 Import auto-tagger prompts can be disabled by specifying the `-q` option.
 You can interrupt and continue or repeat the command to synchronize likes from your Youtube account(s) into your beets library incrementally.
 
