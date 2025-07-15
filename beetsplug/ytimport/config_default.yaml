@@ -5,7 +5,7 @@ format: bestaudio/best # favour opus over m4a and mp3
 url_file: ''
 likes: false
 max_likes: 15
-auth_headers: # file path
+auth_headers: ''
 set: {}
 min_length: 60 # 1m; min track length in seconds
 max_length: 7200 # 2h; max track length in seconds
@@ -15,4 +15,4 @@ group_albums: true
 #quiet_fallback: skip # defaults to import configuration
 oauth_client_id: ''
 oauth_client_secret: ''
-#cookies: '/path/to/your/cookies'
+cookiefile: ''
