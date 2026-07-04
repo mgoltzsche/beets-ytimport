@@ -6,13 +6,19 @@ import requests
 from beets.plugins import BeetsPlugin
 from beets.dbcore import types
 from beets.ui import Subcommand
-from beets.ui import _store_dict
-from beets.ui.commands import import_files
 from beets import config
 from optparse import OptionParser
 from confuse import ConfigSource, load_yaml
 import beetsplug.ytimport.youtube
 import beetsplug.ytimport.split
+
+# Beets 2.x have this at the first path, 1.x has it at the path in the `except` branch
+try: 
+    from beets.ui.commands.import_ import _store_dict, import_files
+except ImportError:
+    from beets.ui import _store_dict
+    from beets.ui.commands import import_files
+
 
 class YtImportPlugin(BeetsPlugin):
     item_types = {
